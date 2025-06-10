@@ -46,29 +46,29 @@ export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen sweet-gradient flex items-center justify-center p-4">
+    <div className="min-h-screen brand-gradient flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-lg mb-4">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-brown-800 rounded-full shadow-lg mb-4">
             <span className="text-3xl">🍰</span>
           </div>
-          <h1 className="text-4xl font-bold text-sweet-gold-800 mb-2">Doce Doçura</h1>
-          <p className="text-sweet-gold-600">Sistema de Gerenciamento</p>
+          <h1 className="text-4xl font-bold text-brand-brown-800 mb-2">Doce Doçura</h1>
+          <p className="text-brand-brown-700">Sistema de Gerenciamento</p>
         </div>
 
-        <Card className="sweet-card animate-fade-in">
+        <Card className="brand-card animate-fade-in">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl text-sweet-gold-800">Bem-vindo</CardTitle>
-            <CardDescription>Selecione seu tipo de acesso</CardDescription>
+            <CardTitle className="text-2xl text-brand-brown-800">Bem-vindo</CardTitle>
+            <CardDescription className="text-brand-brown-600">Selecione seu tipo de acesso</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="fabrica" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="fabrica" className="flex items-center gap-2">
+                <TabsTrigger value="fabrica" className="flex items-center gap-2 data-[state=active]:bg-brand-yellow-400 data-[state=active]:text-brand-brown-800">
                   🏭 Fábrica
                 </TabsTrigger>
-                <TabsTrigger value="distribuidor" className="flex items-center gap-2">
+                <TabsTrigger value="distribuidor" className="flex items-center gap-2 data-[state=active]:bg-brand-yellow-400 data-[state=active]:text-brand-brown-800">
                   🚛 Distribuidor
                 </TabsTrigger>
               </TabsList>
@@ -76,28 +76,28 @@ export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
               <TabsContent value="fabrica">
                 <form onSubmit={handleFabricaLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="fabrica-email">E-mail</Label>
+                    <Label htmlFor="fabrica-email" className="text-brand-brown-800">E-mail</Label>
                     <Input
                       id="fabrica-email"
                       type="email"
                       placeholder="Digite seu e-mail"
                       value={fabricaEmail}
                       onChange={(e) => setFabricaEmail(e.target.value)}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-sweet-pink-300"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-brand-yellow-400"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="fabrica-password">Senha</Label>
+                    <Label htmlFor="fabrica-password" className="text-brand-brown-800">Senha</Label>
                     <Input
                       id="fabrica-password"
                       type="password"
                       placeholder="Digite sua senha"
                       value={fabricaPassword}
                       onChange={(e) => setFabricaPassword(e.target.value)}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-sweet-pink-300"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-brand-yellow-400"
                     />
                   </div>
-                  <Button type="submit" className="w-full sweet-button py-6 text-lg">
+                  <Button type="submit" className="w-full brand-button-primary py-6 text-lg">
                     🏭 Entrar como Fábrica
                   </Button>
                 </form>
@@ -106,28 +106,28 @@ export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
               <TabsContent value="distribuidor">
                 <form onSubmit={handleDistribuidorLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="distribuidor-email">E-mail</Label>
+                    <Label htmlFor="distribuidor-email" className="text-brand-brown-800">E-mail</Label>
                     <Input
                       id="distribuidor-email"
                       type="email"
                       placeholder="Digite seu e-mail"
                       value={distribuidorEmail}
                       onChange={(e) => setDistribuidorEmail(e.target.value)}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-sweet-pink-300"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-brand-yellow-400"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="distribuidor-password">Senha</Label>
+                    <Label htmlFor="distribuidor-password" className="text-brand-brown-800">Senha</Label>
                     <Input
                       id="distribuidor-password"
                       type="password"
                       placeholder="Digite sua senha"
                       value={distribuidorPassword}
                       onChange={(e) => setDistribuidorPassword(e.target.value)}
-                      className="transition-all duration-200 focus:ring-2 focus:ring-sweet-pink-300"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-brand-yellow-400"
                     />
                   </div>
-                  <Button type="submit" className="w-full sweet-button py-6 text-lg">
+                  <Button type="submit" className="w-full brand-button-primary py-6 text-lg">
                     🚛 Entrar como Distribuidor
                   </Button>
                 </form>

@@ -63,42 +63,42 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Doce Doçura brand colors
-				'sweet-pink': {
-					50: '#fdf2f8',
-					100: '#fce7f3',
-					200: '#fbcfe8',
-					300: '#f9a8d4',
-					400: '#f472b6',
-					500: '#ec4899',
-					600: '#db2777',
-					700: '#be185d',
-					800: '#9d174d',
-					900: '#831843'
+				// Nova paleta de cores para Doce Doçura
+				'brand-brown': {
+					50: '#faf9f7',
+					100: '#f3f1ec',
+					200: '#e7e2d9',
+					300: '#d4cbbc',
+					400: '#beb09a',
+					500: '#a8957d',
+					600: '#8a7760',
+					700: '#6b5c47',
+					800: '#4B3821', // Cor primária
+					900: '#3a2b1a'
 				},
-				'sweet-gold': {
-					50: '#fffbeb',
-					100: '#fef3c7',
-					200: '#fde68a',
-					300: '#fcd34d',
-					400: '#fbbf24',
-					500: '#f59e0b',
-					600: '#d97706',
-					700: '#b45309',
-					800: '#92400e',
-					900: '#78350f'
+				'brand-yellow': {
+					50: '#fffef0',
+					100: '#fffacc',
+					200: '#fff599',
+					300: '#ffeb4d',
+					400: '#FFCC00', // Cor secundária
+					500: '#e6b800',
+					600: '#cc9900',
+					700: '#b38600',
+					800: '#997300',
+					900: '#806000'
 				},
-				'sweet-cream': {
-					50: '#fefdf8',
-					100: '#fefbf0',
-					200: '#fdf6e3',
-					300: '#fbefd6',
-					400: '#f7e6c4',
-					500: '#f1d5a7',
-					600: '#e8b977',
-					700: '#d89b4a',
-					800: '#c07c1f',
-					900: '#8b5a0c'
+				'brand-neutral': {
+					50: '#fafafa',
+					100: '#f5f5f5',
+					200: '#e5e5e5',
+					300: '#d4d4d4',
+					400: '#a3a3a3',
+					500: '#737373',
+					600: '#525252',
+					700: '#404040',
+					800: '#262626',
+					900: '#171717'
 				}
 			},
 			borderRadius: {
@@ -133,12 +133,12 @@ export default {
 						transform: "translateY(0)"
 					}
 				},
-				'sweet-glow': {
+				'brand-glow': {
 					"0%, 100%": {
-						boxShadow: "0 0 20px rgba(236, 72, 153, 0.3)"
+						boxShadow: "0 0 20px rgba(255, 204, 0, 0.3)"
 					},
 					"50%": {
-						boxShadow: "0 0 30px rgba(236, 72, 153, 0.5)"
+						boxShadow: "0 0 30px rgba(255, 204, 0, 0.5)"
 					}
 				}
 			},
@@ -146,11 +146,11 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.3s ease-out',
-				'sweet-glow': 'sweet-glow 2s ease-in-out infinite'
+				'brand-glow': 'brand-glow 2s ease-in-out infinite'
 			},
 			backgroundImage: {
-				'sweet-gradient': 'linear-gradient(135deg, #fdf2f8 0%, #fef3c7 100%)',
-				'sweet-gradient-dark': 'linear-gradient(135deg, #9d174d 0%, #92400e 100%)'
+				'brand-gradient': 'linear-gradient(135deg, #fafafa 0%, #fff599 100%)',
+				'brand-gradient-dark': 'linear-gradient(135deg, #4B3821 0%, #FFCC00 100%)'
 			}
 		}
 	},
