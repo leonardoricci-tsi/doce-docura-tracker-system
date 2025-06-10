@@ -5,6 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GerenciamentoProducao } from '@/components/GerenciamentoProducao';
 import { Rastreabilidade } from '@/components/Rastreabilidade';
 import { DashboardAnalytics } from '@/components/DashboardAnalytics';
+import { DashboardFinanceiro } from '@/components/DashboardFinanceiro';
+import { DashboardOperacional } from '@/components/DashboardOperacional';
+import { DashboardQualidade } from '@/components/DashboardQualidade';
 
 interface FabricaDashboardProps {
   currentUser: string;
@@ -43,15 +46,24 @@ export const FabricaDashboard = ({ currentUser, onLogout }: FabricaDashboardProp
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="producao" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8 bg-white border border-sweet-cream-300">
+          <TabsList className="grid w-full grid-cols-6 mb-8 bg-white border border-sweet-cream-300">
             <TabsTrigger value="producao" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
-              🏭 Gerenciamento de Produção
+              🏭 Produção
             </TabsTrigger>
             <TabsTrigger value="rastreabilidade" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
               🔍 Rastreabilidade
             </TabsTrigger>
-            <TabsTrigger value="dashboard" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
-              📊 Dashboard
+            <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
+              📊 Analytics
+            </TabsTrigger>
+            <TabsTrigger value="financeiro" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
+              💰 Financeiro
+            </TabsTrigger>
+            <TabsTrigger value="operacional" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
+              ⚙️ Operacional
+            </TabsTrigger>
+            <TabsTrigger value="qualidade" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
+              ✅ Qualidade
             </TabsTrigger>
           </TabsList>
 
@@ -63,8 +75,20 @@ export const FabricaDashboard = ({ currentUser, onLogout }: FabricaDashboardProp
             <Rastreabilidade />
           </TabsContent>
 
-          <TabsContent value="dashboard">
+          <TabsContent value="analytics">
             <DashboardAnalytics />
+          </TabsContent>
+
+          <TabsContent value="financeiro">
+            <DashboardFinanceiro />
+          </TabsContent>
+
+          <TabsContent value="operacional">
+            <DashboardOperacional />
+          </TabsContent>
+
+          <TabsContent value="qualidade">
+            <DashboardQualidade />
           </TabsContent>
         </Tabs>
       </main>

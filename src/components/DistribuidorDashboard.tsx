@@ -1,6 +1,10 @@
 
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RegistroDistribuicao } from '@/components/RegistroDistribuicao';
+import { EstoqueDistribuidor } from '@/components/EstoqueDistribuidor';
+import { RelatoriosDistribuidor } from '@/components/RelatoriosDistribuidor';
+import { RotasEntrega } from '@/components/RotasEntrega';
 
 interface DistribuidorDashboardProps {
   currentUser: string;
@@ -38,12 +42,38 @@ export const DistribuidorDashboard = ({ currentUser, onLogout }: DistribuidorDas
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-sweet-gold-800 mb-2">🚛 Registro de Distribuição</h2>
-          <p className="text-sweet-gold-600">Gerencie a distribuição dos produtos para pontos de venda</p>
-        </div>
-        
-        <RegistroDistribuicao distribuidorName={currentUser} />
+        <Tabs defaultValue="distribuicao" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 mb-8 bg-white border border-sweet-cream-300">
+            <TabsTrigger value="distribuicao" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
+              🚛 Distribuição
+            </TabsTrigger>
+            <TabsTrigger value="estoque" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
+              📦 Estoque
+            </TabsTrigger>
+            <TabsTrigger value="rotas" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
+              🗺️ Rotas de Entrega
+            </TabsTrigger>
+            <TabsTrigger value="relatorios" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
+              📊 Relatórios
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="distribuicao">
+            <RegistroDistribuicao distribuidorName={currentUser} />
+          </TabsContent>
+
+          <TabsContent value="estoque">
+            <EstoqueDistribuidor distribuidorName={currentUser} />
+          </TabsContent>
+
+          <TabsContent value="rotas">
+            <RotasEntrega distribuidorName={currentUser} />
+          </TabsContent>
+
+          <TabsContent value="relatorios">
+            <RelatoriosDistribuidor distribuidorName={currentUser} />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
