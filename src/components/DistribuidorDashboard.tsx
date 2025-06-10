@@ -2,9 +2,6 @@
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RegistroDistribuicao } from '@/components/RegistroDistribuicao';
-import { EstoqueDistribuidor } from '@/components/EstoqueDistribuidor';
-import { RelatoriosDistribuidor } from '@/components/RelatoriosDistribuidor';
-import { RotasEntrega } from '@/components/RotasEntrega';
 
 interface DistribuidorDashboardProps {
   currentUser: string;
@@ -43,35 +40,14 @@ export const DistribuidorDashboard = ({ currentUser, onLogout }: DistribuidorDas
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="distribuicao" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8 bg-white border border-sweet-cream-300">
+          <TabsList className="grid w-full grid-cols-1 mb-8 bg-white border border-sweet-cream-300">
             <TabsTrigger value="distribuicao" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
               🚛 Distribuição
-            </TabsTrigger>
-            <TabsTrigger value="estoque" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
-              📦 Estoque
-            </TabsTrigger>
-            <TabsTrigger value="rotas" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
-              🗺️ Rotas de Entrega
-            </TabsTrigger>
-            <TabsTrigger value="relatorios" className="flex items-center gap-2 data-[state=active]:bg-sweet-pink-500 data-[state=active]:text-white">
-              📊 Relatórios
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="distribuicao">
             <RegistroDistribuicao distribuidorName={currentUser} />
-          </TabsContent>
-
-          <TabsContent value="estoque">
-            <EstoqueDistribuidor distribuidorName={currentUser} />
-          </TabsContent>
-
-          <TabsContent value="rotas">
-            <RotasEntrega distribuidorName={currentUser} />
-          </TabsContent>
-
-          <TabsContent value="relatorios">
-            <RelatoriosDistribuidor distribuidorName={currentUser} />
           </TabsContent>
         </Tabs>
       </main>
