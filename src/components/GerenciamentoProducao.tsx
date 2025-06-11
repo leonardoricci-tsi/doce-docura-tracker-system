@@ -21,12 +21,13 @@ interface ProducaoData {
 }
 
 const produtos = [
+  'Pão de Mel',
+  'Alfajor'
+];
+const sabor= [
   'Brigadeiro',
-  'Beijinho',
-  'Quindim',
-  'Bem-casado',
-  'Trufa',
-  'Brownie'
+  'Creme de Nozes',
+  'Doce de Leite',
 ];
 
 const distribuidores = [
@@ -70,6 +71,7 @@ export const GerenciamentoProducao = () => {
     const errors = [];
     if (!formData.numeroLote) errors.push('Número do Lote');
     if (!formData.produto) errors.push('Produto');
+    if (!formData.sabor) errors.push('Sabor');
     if (!formData.quantidadeProduzida) errors.push('Quantidade Produzida');
     if (!formData.dataFabricacao) errors.push('Data de Fabricação');
     if (!formData.dataValidade) errors.push('Data de Validade');
@@ -144,7 +146,7 @@ export const GerenciamentoProducao = () => {
   return (
     <div className="space-y-8">
       {/* Form */}
-      <Card className="sweet-card">
+      <Card className="sweet-card bg-brand-yellow-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-sweet-gold-800">
             🏭 {editingId ? 'Editar Produção' : 'Nova Produção'}
@@ -162,19 +164,19 @@ export const GerenciamentoProducao = () => {
                 value={formData.numeroLote}
                 onChange={(e) => setFormData(prev => ({ ...prev, numeroLote: e.target.value }))}
                 placeholder="Ex: LOT001"
-                className="focus:ring-2 focus:ring-sweet-pink-300"
+                className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none"
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="produto">Nome do Produto *</Label>
               <Select value={formData.produto} onValueChange={(value) => setFormData(prev => ({ ...prev, produto: value }))}>
-                <SelectTrigger className="focus:ring-2 focus:ring-sweet-pink-300">
+                <SelectTrigger className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none">
                   <SelectValue placeholder="Selecione o produto" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-brand-yellow-100">
                   {produtos.map(produto => (
-                    <SelectItem key={produto} value={produto}>{produto}</SelectItem>
+                    <SelectItem className="bg-brand-yellow-50" key={produto} value={produto}>{produto} </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -182,13 +184,16 @@ export const GerenciamentoProducao = () => {
 
             <div className="space-y-2">
               <Label htmlFor="sabor">Sabor</Label>
-              <Input
-                id="sabor"
-                value={formData.sabor}
-                onChange={(e) => setFormData(prev => ({ ...prev, sabor: e.target.value }))}
-                placeholder="Ex: Chocolate, Morango"
-                className="focus:ring-2 focus:ring-sweet-pink-300"
-              />
+              <Select value={formData.sabor} onValueChange={(value) => setFormData(prev => ({ ...prev, sabor: value }))}>
+                <SelectTrigger className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none">
+                  <SelectValue placeholder="Selecione o sabor" />
+                </SelectTrigger>
+                <SelectContent className="bg-brand-yellow-100">
+                  {sabor.map(sabor => (
+                    <SelectItem className="bg-brand-yellow-50" key={sabor} value={sabor}>{sabor} </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
@@ -199,7 +204,7 @@ export const GerenciamentoProducao = () => {
                 value={formData.quantidadeProduzida}
                 onChange={(e) => setFormData(prev => ({ ...prev, quantidadeProduzida: e.target.value }))}
                 placeholder="Ex: 100"
-                className="focus:ring-2 focus:ring-sweet-pink-300"
+                className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none"
               />
             </div>
 
@@ -210,7 +215,7 @@ export const GerenciamentoProducao = () => {
                 type="date"
                 value={formData.dataFabricacao}
                 onChange={(e) => setFormData(prev => ({ ...prev, dataFabricacao: e.target.value }))}
-                className="focus:ring-2 focus:ring-sweet-pink-300"
+                className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none"
               />
             </div>
 
@@ -221,7 +226,7 @@ export const GerenciamentoProducao = () => {
                 type="date"
                 value={formData.dataValidade}
                 onChange={(e) => setFormData(prev => ({ ...prev, dataValidade: e.target.value }))}
-                className="focus:ring-2 focus:ring-sweet-pink-300"
+                className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none"
               />
             </div>
 
@@ -232,26 +237,26 @@ export const GerenciamentoProducao = () => {
                 value={formData.notaFiscal}
                 onChange={(e) => setFormData(prev => ({ ...prev, notaFiscal: e.target.value }))}
                 placeholder="Ex: NF-001"
-                className="focus:ring-2 focus:ring-sweet-pink-300"
+                className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none"
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="distribuidor">Distribuidor</Label>
               <Select value={formData.distribuidor} onValueChange={(value) => setFormData(prev => ({ ...prev, distribuidor: value }))}>
-                <SelectTrigger className="focus:ring-2 focus:ring-sweet-pink-300">
+                <SelectTrigger className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none">
                   <SelectValue placeholder="Selecione o distribuidor" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-brand-yellow-100">
                   {distribuidores.map(distribuidor => (
-                    <SelectItem key={distribuidor} value={distribuidor}>{distribuidor}</SelectItem>
+                    <SelectItem className="bg-brand-yellow-50" key={distribuidor} value={distribuidor}>{distribuidor}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
             <div className="md:col-span-2 flex gap-4 pt-4">
-              <Button type="submit" className="sweet-button flex-1">
+              <Button type="submit" className="sweet-button flex-1 bg-primaria text-brand-yellow-300 hover:bg-orange-900">
                 {editingId ? '📝 Atualizar Produção' : '💾 Salvar Produção'}
               </Button>
               {editingId && (
@@ -265,7 +270,7 @@ export const GerenciamentoProducao = () => {
       </Card>
 
       {/* Table */}
-      <Card className="sweet-card">
+      <Card className="sweet-card  bg-brand-yellow-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-sweet-gold-800">
             📋 Produções Cadastradas

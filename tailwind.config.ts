@@ -99,7 +99,19 @@ export default {
 					700: '#404040',
 					800: '#262626',
 					900: '#171717'
-				}
+				},
+
+				'primaria': '#4B3821',   // Marrom
+				'secundaria': '#FFCC00', // Amarelo
+				neutra: {
+					'branco': '#FFFFFF',
+					'cinza1': '#F5F5F5',
+					'cinza2': '#E5E5E5',
+					'cinza3': '#D4D4D4',
+					'cinza4': '#A3A3A3',
+					'cinza5': '#737373',
+				},
+
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
