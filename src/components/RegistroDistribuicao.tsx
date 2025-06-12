@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -298,8 +297,6 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
                   <TableRow>
                     <TableHead>Produto</TableHead>
                     <TableHead>Lote</TableHead>
-                    <TableHead>Distribuidor</TableHead>
-                    <TableHead>Regiões</TableHead>
                     <TableHead>PDVs</TableHead>
                     <TableHead>Ações</TableHead>
                   </TableRow>
@@ -309,16 +306,6 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
                     <TableRow key={distribuicao.id}>
                       <TableCell className="font-medium">{distribuicao.produto}</TableCell>
                       <TableCell>{distribuicao.numeroLote}</TableCell>
-                      <TableCell>{distribuicao.distribuidor}</TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {distribuicao.regioes.map((regiao, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {regiao}
-                            </Badge>
-                          ))}
-                        </div>
-                      </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
                           {distribuicao.pdvs.map((pdv, index) => (
