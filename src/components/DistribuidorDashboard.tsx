@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RegistroDistribuicao } from '@/components/RegistroDistribuicao';
+import { Rastreabilidade } from '@/components/Rastreabilidade';
 
 interface DistribuidorDashboardProps {
   currentUser: string;
@@ -40,14 +41,21 @@ export const DistribuidorDashboard = ({ currentUser, onLogout }: DistribuidorDas
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 brand-gradient min-h-screen">
         <Tabs defaultValue="distribuicao" className="w-full">
-          <TabsList className="grid w-full grid-cols-1 mb-8 bg-white border border-brand-neutral-300">
+          <TabsList className="grid w-full grid-cols-2 mb-8 bg-white border border-brand-neutral-300">
             <TabsTrigger value="distribuicao" className="flex items-center gap-2 data-[state=active]:bg-brand-yellow-400 data-[state=active]:text-brand-brown-800">
               🚛 Distribuição
+            </TabsTrigger>
+            <TabsTrigger value="rastreabilidade" className="flex items-center gap-2 data-[state=active]:bg-brand-yellow-400 data-[state=active]:text-brand-brown-800">
+              🔍 Rastreabilidade
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="distribuicao">
             <RegistroDistribuicao distribuidorName={currentUser} />
+          </TabsContent>
+
+          <TabsContent value="rastreabilidade">
+            <Rastreabilidade />
           </TabsContent>
         </Tabs>
       </main>
