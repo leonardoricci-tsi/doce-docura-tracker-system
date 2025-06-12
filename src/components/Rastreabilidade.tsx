@@ -1,171 +1,274 @@
-
+import { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Search } from 'lucide-react';
 
-// Mock data combining production and distribution
-const rastreabilidadeData = [
+interface Produto {
+  id: string;
+  nome: string;
+  lote: string;
+  dataProducao: string;
+  dataValidade: string;
+  status: 'Em Produção' | 'Em Trânsito' | 'Entregue';
+  distribuidor: string;
+  localizacaoAtual: string;
+}
+
+interface EventoRastreabilidade {
+  data: string;
+  hora: string;
+  evento: string;
+  responsavel: string;
+  localizacao: string;
+}
+
+// Dados de exemplo
+const produtosExemplo: Produto[] = [
   {
-    numeroLote: 'LOT001',
-    produto: 'Brigadeiro',
-    quantidadeProduzida: 100,
-    dataFabricacao: '2024-06-05',
-    dataValidade: '2024-06-20',
-    distribuidor: 'Distribuidora São Paulo',
-    regioes: ['Grande SP', 'Interior SP'],
-    pdvs: ['Padaria da Esquina', 'Supermercado XYZ']
+    id: '1',
+    nome: 'Bolo de Chocolate',
+    lote: 'BC-2023-001',
+    dataProducao: '10/01/2023',
+    dataValidade: '10/04/2023',
+    status: 'Entregue',
+    distribuidor: 'Distribuidora Sul',
+    localizacaoAtual: 'Loja Centro'
   },
   {
-    numeroLote: 'LOT002',
-    produto: 'Beijinho',
-    quantidadeProduzida: 80,
-    dataFabricacao: '2024-06-08',
-    dataValidade: '2024-07-15',
-    distribuidor: 'Distribuidora Rio de Janeiro',
-    regioes: ['Zona Sul RJ', 'Centro RJ'],
-    pdvs: ['Confeitaria Doce Mel', 'Mercado Bom Preço']
+    id: '2',
+    nome: 'Torta de Morango',
+    lote: 'TM-2023-042',
+    dataProducao: '15/02/2023',
+    dataValidade: '15/05/2023',
+    status: 'Em Trânsito',
+    distribuidor: 'Distribuidora Norte',
+    localizacaoAtual: 'Centro de Distribuição'
   },
   {
-    numeroLote: 'LOT003',
-    produto: 'Quindim',
-    quantidadeProduzida: 50,
-    dataFabricacao: '2024-06-01',
-    dataValidade: '2024-06-12',
-    distribuidor: 'Distribuidora Minas Gerais',
-    regioes: ['BH', 'Interior MG'],
-    pdvs: ['Doceria Mineira']
-  }
+    id: '3',
+    nome: 'Pudim de Leite',
+    lote: 'PL-2023-103',
+    dataProducao: '22/03/2023',
+    dataValidade: '22/06/2023',
+    status: 'Em Produção',
+    distribuidor: 'Distribuidora Leste',
+    localizacaoAtual: 'Fábrica'
+  },
 ];
 
-const getValidityStatus = (dataValidade: string) => {
-  const today = new Date();
-  const validityDate = new Date(dataValidade);
-  const daysDiff = Math.ceil((validityDate.getTime() - today.getTime()) / (1000 * 3600 * 24));
-
-  if (daysDiff <= 15) {
-    return { status: 'danger', label: 'Crítico', className: 'date-danger' };
-  } else if (daysDiff <= 29) {
-    return { status: 'warning', label: 'Atenção', className: 'date-warning' };
-  } else {
-    return { status: 'safe', label: 'OK', className: 'date-safe' };
-  }
+const eventosRastreabilidadeExemplo: Record<string, EventoRastreabilidade[]> = {
+  'BC-2023-001': [
+    {
+      data: '10/01/2023',
+      hora: '08:30',
+      evento: 'Produção Iniciada',
+      responsavel: 'Maria Silva',
+      localizacao: 'Fábrica'
+    },
+    {
+      data: '10/01/2023',
+      hora: '14:45',
+      evento: 'Produção Finalizada',
+      responsavel: 'Maria Silva',
+      localizacao: 'Fábrica'
+    },
+    {
+      data: '11/01/2023',
+      hora: '09:15',
+      evento: 'Saída para Distribuição',
+      responsavel: 'João Pereira',
+      localizacao: 'Centro de Distribuição'
+    },
+    {
+      data: '12/01/2023',
+      hora: '11:30',
+      evento: 'Entrega Realizada',
+      responsavel: 'Carlos Santos',
+      localizacao: 'Loja Centro'
+    }
+  ],
+  'TM-2023-042': [
+    {
+      data: '15/02/2023',
+      hora: '09:00',
+      evento: 'Produção Iniciada',
+      responsavel: 'Ana Oliveira',
+      localizacao: 'Fábrica'
+    },
+    {
+      data: '15/02/2023',
+      hora: '16:20',
+      evento: 'Produção Finalizada',
+      responsavel: 'Ana Oliveira',
+      localizacao: 'Fábrica'
+    },
+    {
+      data: '16/02/2023',
+      hora: '10:45',
+      evento: 'Saída para Distribuição',
+      responsavel: 'Roberto Alves',
+      localizacao: 'Centro de Distribuição'
+    }
+  ],
+  'PL-2023-103': [
+    {
+      data: '22/03/2023',
+      hora: '10:15',
+      evento: 'Produção Iniciada',
+      responsavel: 'Fernanda Lima',
+      localizacao: 'Fábrica'
+    }
+  ]
 };
 
 export const Rastreabilidade = () => {
+  const [termoBusca, setTermoBusca] = useState('');
+  const [loteSelecionado, setLoteSelecionado] = useState<string | null>(null);
+
+  const produtosFiltrados = produtosExemplo.filter(produto => 
+    produto.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
+    produto.lote.toLowerCase().includes(termoBusca.toLowerCase())
+  );
+
+  const handleBusca = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Implementação futura: busca no backend
+  };
+
   return (
-    <div className="space-y-8">
-      <Card className="sweet-card">
+    <div className="space-y-6">
+      {/* Busca */}
+      <Card className="brand-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-sweet-gold-800">
-            🔍 Rastreabilidade Completa
-          </CardTitle>
+          <CardTitle className="text-brand-brown-800">Rastreabilidade de Produtos</CardTitle>
           <CardDescription>
-            Acompanhe toda a cadeia de produção e distribuição dos produtos
+            Busque por nome do produto ou número do lote para rastrear
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {rastreabilidadeData.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-sweet-gold-600">Nenhum dado de rastreabilidade disponível.</p>
-              <p className="text-sm text-sweet-gold-500">Cadastre produções e distribuições para visualizar o rastreamento.</p>
+          <form onSubmit={handleBusca} className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Buscar por produto ou lote..."
+                className="pl-8"
+                value={termoBusca}
+                onChange={(e) => setTermoBusca(e.target.value)}
+              />
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Lote</TableHead>
-                    <TableHead>Produto</TableHead>
-                    <TableHead>Qtd. Produzida</TableHead>
-                    <TableHead>Data Fabricação</TableHead>
-                    <TableHead>Data Validade</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Distribuidor</TableHead>
-                    <TableHead>Regiões</TableHead>
-                    <TableHead>PDVs</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {rastreabilidadeData.map((item) => {
-                    const validityStatus = getValidityStatus(item.dataValidade);
-                    
-                    return (
-                      <TableRow key={item.numeroLote}>
-                        <TableCell className="font-medium">{item.numeroLote}</TableCell>
-                        <TableCell>{item.produto}</TableCell>
-                        <TableCell>{item.quantidadeProduzida}</TableCell>
-                        <TableCell>{new Date(item.dataFabricacao).toLocaleDateString()}</TableCell>
-                        <TableCell className={`rounded-md px-2 py-1 ${validityStatus.className}`}>
-                          {new Date(item.dataValidade).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <Badge 
-                            variant={validityStatus.status === 'danger' ? 'destructive' : 'secondary'}
-                            className={validityStatus.status === 'warning' ? 'bg-yellow-100 text-yellow-800' : ''}
-                          >
-                            {validityStatus.label}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{item.distribuidor}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {item.regioes.map((regiao, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
-                                {regiao}
-                              </Badge>
-                            ))}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {item.pdvs.map((pdv, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
-                                {pdv}
-                              </Badge>
-                            ))}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+            <Button type="submit" className="bg-brand-brown-800 hover:bg-brand-brown-900">
+              Buscar
+            </Button>
+          </form>
         </CardContent>
       </Card>
 
-      {/* Legend */}
-      <Card className="sweet-card">
+      {/* Resultados */}
+      <Card className="brand-card">
         <CardHeader>
-          <CardTitle className="text-lg text-sweet-gold-800">📝 Legenda de Status</CardTitle>
+          <CardTitle className="text-brand-brown-800">Histórico de Rastreabilidade</CardTitle>
+          <CardDescription>
+            Visualize todo o histórico de movimentação dos produtos
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-4 h-4 rounded date-danger"></div>
-              <div>
-                <p className="font-medium text-red-800">Crítico</p>
-                <p className="text-sm text-red-600">≤ 15 dias para vencer</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-4 h-4 rounded date-warning"></div>
-              <div>
-                <p className="font-medium text-yellow-800">Atenção</p>
-                <p className="text-sm text-yellow-600">16-29 dias para vencer</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-4 h-4 rounded date-safe"></div>
-              <div>
-                <p className="font-medium text-green-800">OK</p>
-                <p className="text-sm text-green-600">≥ 30 dias para vencer</p>
-              </div>
-            </div>
+          <div className="rounded-md border border-brand-neutral-300">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Produto</TableHead>
+                  <TableHead>Lote</TableHead>
+                  <TableHead>Data Produção</TableHead>
+                  <TableHead>Data Validade</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Localização Atual</TableHead>
+                  <TableHead>Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {produtosFiltrados.map((produto) => (
+                  <TableRow key={produto.id}>
+                    <TableCell className="font-medium">{produto.nome}</TableCell>
+                    <TableCell>{produto.lote}</TableCell>
+                    <TableCell>{produto.dataProducao}</TableCell>
+                    <TableCell>{produto.dataValidade}</TableCell>
+                    <TableCell>
+                      <Badge variant={
+                        produto.status === 'Em Trânsito' ? 'default' :
+                        produto.status === 'Entregue' ? 'secondary' : 'outline'
+                      }>
+                        {produto.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{produto.localizacaoAtual}</TableCell>
+                    <TableCell>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setLoteSelecionado(produto.lote)}
+                        className="border-brand-yellow-400 text-brand-brown-800 hover:bg-brand-yellow-400"
+                      >
+                        Ver Detalhes
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
+
+      {/* Detalhamento de rastreabilidade */}
+      {loteSelecionado && (
+        <Card className="brand-card">
+          <CardHeader>
+            <CardTitle className="text-brand-brown-800">Detalhes de Rastreabilidade</CardTitle>
+            <CardDescription>
+              Lote: {loteSelecionado}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-md border border-brand-neutral-300">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Hora</TableHead>
+                    <TableHead>Evento</TableHead>
+                    <TableHead>Responsável</TableHead>
+                    <TableHead>Localização</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {eventosRastreabilidadeExemplo[loteSelecionado]?.map((evento, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{evento.data}</TableCell>
+                      <TableCell>{evento.hora}</TableCell>
+                      <TableCell className="font-medium">{evento.evento}</TableCell>
+                      <TableCell>{evento.responsavel}</TableCell>
+                      <TableCell>{evento.localizacao}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            <div className="mt-4 flex justify-end">
+              <Button 
+                variant="outline" 
+                onClick={() => setLoteSelecionado(null)}
+                className="border-brand-neutral-300 text-brand-brown-800"
+              >
+                Fechar Detalhes
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
