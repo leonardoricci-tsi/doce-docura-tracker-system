@@ -34,7 +34,7 @@ export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
           <p className="text-sweet-gold-600 text-lg">Sistema de Gerenciamento</p>
         </div>
 
-        <Card className="brand-card animate-fade-in bg-brand-yellow-200">
+        <Card className="brand-card animate-fade-in bg-brand-yellow-400">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl text-brand-brown-800">
               {isSigningUp ? 'Criar Conta' : 'Bem-vindo'}
