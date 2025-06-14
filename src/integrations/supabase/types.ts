@@ -9,6 +9,220 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      distribuicoes: {
+        Row: {
+          created_at: string | null
+          data_distribuicao: string
+          distribuidor_id: string
+          id: string
+          lote_id: string
+          observacoes: string | null
+          quantidade_distribuida: number
+          responsavel_distribuicao: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          data_distribuicao: string
+          distribuidor_id: string
+          id?: string
+          lote_id: string
+          observacoes?: string | null
+          quantidade_distribuida: number
+          responsavel_distribuicao: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          data_distribuicao?: string
+          distribuidor_id?: string
+          id?: string
+          lote_id?: string
+          observacoes?: string | null
+          quantidade_distribuida?: number
+          responsavel_distribuicao?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "distribuicoes_distribuidor_id_fkey"
+            columns: ["distribuidor_id"]
+            isOneToOne: false
+            referencedRelation: "distribuidores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "distribuicoes_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes_producao"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      distribuidores: {
+        Row: {
+          cnpj: string | null
+          created_at: string | null
+          email: string | null
+          endereco: string | null
+          id: string
+          nome: string
+          responsavel: string | null
+          telefone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          cnpj?: string | null
+          created_at?: string | null
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          nome: string
+          responsavel?: string | null
+          telefone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          cnpj?: string | null
+          created_at?: string | null
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          nome?: string
+          responsavel?: string | null
+          telefone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      lotes_producao: {
+        Row: {
+          codigo_lote: string
+          created_at: string | null
+          data_producao: string
+          data_validade: string
+          id: string
+          observacoes: string | null
+          produto_id: string
+          quantidade_produzida: number
+          responsavel: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          codigo_lote: string
+          created_at?: string | null
+          data_producao: string
+          data_validade: string
+          id?: string
+          observacoes?: string | null
+          produto_id: string
+          quantidade_produzida: number
+          responsavel: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          codigo_lote?: string
+          created_at?: string | null
+          data_producao?: string
+          data_validade?: string
+          id?: string
+          observacoes?: string | null
+          produto_id?: string
+          quantidade_produzida?: number
+          responsavel?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lotes_producao_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pontos_venda: {
+        Row: {
+          created_at: string | null
+          distribuidor_id: string
+          endereco: string
+          id: string
+          nome: string
+          responsavel: string | null
+          telefone: string | null
+          tipo: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          distribuidor_id: string
+          endereco: string
+          id?: string
+          nome: string
+          responsavel?: string | null
+          telefone?: string | null
+          tipo?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          distribuidor_id?: string
+          endereco?: string
+          id?: string
+          nome?: string
+          responsavel?: string | null
+          telefone?: string | null
+          tipo?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pontos_venda_distribuidor_id_fkey"
+            columns: ["distribuidor_id"]
+            isOneToOne: false
+            referencedRelation: "distribuidores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      produtos: {
+        Row: {
+          created_at: string | null
+          descricao: string | null
+          id: string
+          nome: string
+          preco_unitario: number | null
+          tipo: string
+          unidade_medida: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          descricao?: string | null
+          id?: string
+          nome: string
+          preco_unitario?: number | null
+          tipo: string
+          unidade_medida?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          descricao?: string | null
+          id?: string
+          nome?: string
+          preco_unitario?: number | null
+          tipo?: string
+          unidade_medida?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -59,6 +273,57 @@ export type Database = {
           id?: string
         }
         Relationships: []
+      }
+      vendas_pdv: {
+        Row: {
+          created_at: string | null
+          data_venda: string
+          distribuicao_id: string
+          id: string
+          observacoes: string | null
+          ponto_venda_id: string
+          preco_venda: number | null
+          quantidade_vendida: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          data_venda: string
+          distribuicao_id: string
+          id?: string
+          observacoes?: string | null
+          ponto_venda_id: string
+          preco_venda?: number | null
+          quantidade_vendida: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          data_venda?: string
+          distribuicao_id?: string
+          id?: string
+          observacoes?: string | null
+          ponto_venda_id?: string
+          preco_venda?: number | null
+          quantidade_vendida?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendas_pdv_distribuicao_id_fkey"
+            columns: ["distribuicao_id"]
+            isOneToOne: false
+            referencedRelation: "distribuicoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendas_pdv_ponto_venda_id_fkey"
+            columns: ["ponto_venda_id"]
+            isOneToOne: false
+            referencedRelation: "pontos_venda"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

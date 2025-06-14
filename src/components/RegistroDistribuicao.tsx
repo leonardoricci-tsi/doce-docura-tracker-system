@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,31 +9,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-
-interface DistribuicaoData {
-  id: string;
-  produto: string;
-  numeroLote: string;
-  distribuidor: string;
-  regioes: string[];
-  pdvs: string[];
-}
-
-const produtos = [
-  'Brigadeiro',
-  'Beijinho',
-  'Quindim',
-  'Bem-casado',
-  'Trufa',
-  'Brownie'
-];
-
-const lotesDisponiveis = [
-  { lote: 'LOT001', produto: 'Brigadeiro' },
-  { lote: 'LOT002', produto: 'Beijinho' },
-  { lote: 'LOT003', produto: 'Quindim' },
-  { lote: 'LOT004', produto: 'Bem-casado' }
-];
+import { useProducts } from '@/hooks/useProducts';
+import { useLotesProducao } from '@/hooks/useLotesProducao';
+import { useDistribuicoes, useCreateDistribuicao } from '@/hooks/useDistribuicoes';
+import { useDistribuidores } from '@/hooks/useDistribuidores';
 
 const regioesDisponiveis = [
   'Grande SP',
@@ -52,7 +32,12 @@ interface RegistroDistribuicaoProps {
 }
 
 export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoProps) => {
-  const [distribuicoes, setDistribuicoes] = useState<DistribuicaoData[]>([]);
+  const { data: produtos = [] } = useProducts();
+  const { data: lotes = [] } = useLotesProducao();
+  const { data: distribuicoes = [] } = useDistribuicoes();
+  const { data: distribuidores = [] } = useDistribuidores();
+  const createDistribuicaoMutation = useCreateDistribuicao();
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -60,7 +45,8 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
     produto: '',
     numeroLote: '',
     regioes: [] as string[],
-    pdvs: ''
+    pdvs: '',
+    quantidade: ''
   });
 
   const resetForm = () => {
@@ -68,7 +54,8 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
       produto: '',
       numeroLote: '',
       regioes: [],
-      pdvs: ''
+      pdvs: '',
+      quantidade: ''
     });
     setEditingId(null);
   };
@@ -77,13 +64,14 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
     const errors = [];
     if (!formData.produto) errors.push('Produto');
     if (!formData.numeroLote) errors.push('Número do Lote');
+    if (!formData.quantidade) errors.push('Quantidade');
     if (formData.regioes.length === 0) errors.push('Regiões de Entrega');
     if (!formData.pdvs.trim()) errors.push('Pontos de Venda');
     
     return errors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const errors = validateForm();
@@ -96,50 +84,43 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
       return;
     }
 
-    const pdvsArray = formData.pdvs.split(',').map(pdv => pdv.trim()).filter(pdv => pdv);
-
-    const novaDistribuicao: DistribuicaoData = {
-      id: editingId || Date.now().toString(),
-      produto: formData.produto,
-      numeroLote: formData.numeroLote,
-      distribuidor: distribuidorName,
-      regioes: formData.regioes,
-      pdvs: pdvsArray
-    };
-
-    if (editingId) {
-      setDistribuicoes(prev => prev.map(d => d.id === editingId ? novaDistribuicao : d));
+    // Encontrar o distribuidor atual
+    const distribuidorAtual = distribuidores.find(d => d.nome === distribuidorName);
+    if (!distribuidorAtual) {
       toast({
-        title: "Distribuição atualizada",
-        description: "Os dados da distribuição foram atualizados com sucesso."
+        title: "Erro",
+        description: "Distribuidor não encontrado",
+        variant: "destructive"
       });
-    } else {
-      setDistribuicoes(prev => [...prev, novaDistribuicao]);
+      return;
+    }
+
+    try {
+      const novaDistribuicao = {
+        lote_id: formData.numeroLote,
+        distribuidor_id: distribuidorAtual.id,
+        quantidade_distribuida: parseInt(formData.quantidade),
+        data_distribuicao: new Date().toISOString().split('T')[0],
+        responsavel_distribuicao: distribuidorAtual.responsavel || 'Sistema',
+        observacoes: `Regiões: ${formData.regioes.join(', ')}. PDVs: ${formData.pdvs}`
+      };
+
+      await createDistribuicaoMutation.mutateAsync(novaDistribuicao);
+
       toast({
         title: "Distribuição salva",
         description: "Nova distribuição cadastrada com sucesso."
       });
+
+      resetForm();
+    } catch (error) {
+      console.error('Erro ao salvar distribuição:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao salvar a distribuição. Tente novamente.",
+        variant: "destructive"
+      });
     }
-
-    resetForm();
-  };
-
-  const handleEdit = (distribuicao: DistribuicaoData) => {
-    setFormData({
-      produto: distribuicao.produto,
-      numeroLote: distribuicao.numeroLote,
-      regioes: distribuicao.regioes,
-      pdvs: distribuicao.pdvs.join(', ')
-    });
-    setEditingId(distribuicao.id);
-  };
-
-  const handleDelete = (id: string) => {
-    setDistribuicoes(prev => prev.filter(d => d.id !== id));
-    toast({
-      title: "Distribuição excluída",
-      description: "A distribuição foi removida com sucesso."
-    });
   };
 
   const handleRegiaoChange = (regiao: string, checked: boolean) => {
@@ -150,8 +131,8 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
     }
   };
 
-  const lotesDosProdutos = lotesDisponiveis.filter(lote => 
-    !formData.produto || lote.produto === formData.produto
+  const lotesDosProdutos = lotes.filter(lote => 
+    !formData.produto || lote.produto_id === formData.produto
   );
 
   return (
@@ -182,7 +163,7 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
                   </SelectTrigger>
                   <SelectContent>
                     {produtos.map(produto => (
-                      <SelectItem key={produto} value={produto}>{produto}</SelectItem>
+                      <SelectItem key={produto.id} value={produto.id}>{produto.nome}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -199,9 +180,9 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
                     <SelectValue placeholder={formData.produto ? "Selecione o lote" : "Primeiro selecione o produto"} />
                   </SelectTrigger>
                   <SelectContent>
-                    {lotesDosProdutos.map(item => (
-                      <SelectItem key={item.lote} value={item.lote}>
-                        {item.lote} - {item.produto}
+                    {lotesDosProdutos.map(lote => (
+                      <SelectItem key={lote.id} value={lote.id}>
+                        {lote.codigo_lote} - {lote.produtos?.nome}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -214,6 +195,18 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
                   value={distribuidorName}
                   disabled
                   className="bg-gray-100 cursor-not-allowed"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="quantidade">Quantidade a Distribuir *</Label>
+                <Input
+                  id="quantidade"
+                  type="number"
+                  value={formData.quantidade}
+                  onChange={(e) => setFormData(prev => ({ ...prev, quantidade: e.target.value }))}
+                  placeholder="Ex: 100"
+                  className="focus:ring-2 focus:ring-sweet-pink-300"
                 />
               </div>
 
@@ -261,8 +254,12 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
             </div>
 
             <div className="flex gap-4 pt-4">
-              <Button type="submit" className="sweet-button flex-1">
-                {editingId ? '📝 Atualizar Distribuição' : '💾 Salvar Distribuição'}
+              <Button 
+                type="submit" 
+                className="sweet-button flex-1"
+                disabled={createDistribuicaoMutation.isPending}
+              >
+                {createDistribuicaoMutation.isPending ? '⏳ Salvando...' : '💾 Salvar Distribuição'}
               </Button>
               {editingId && (
                 <Button type="button" variant="outline" onClick={resetForm} className="border-sweet-cream-400">
@@ -297,44 +294,21 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
                   <TableRow>
                     <TableHead>Produto</TableHead>
                     <TableHead>Lote</TableHead>
-                    <TableHead>PDVs</TableHead>
-                    <TableHead>Ações</TableHead>
+                    <TableHead>Quantidade</TableHead>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Distribuidor</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {distribuicoes.map((distribuicao) => (
                     <TableRow key={distribuicao.id}>
-                      <TableCell className="font-medium">{distribuicao.produto}</TableCell>
-                      <TableCell>{distribuicao.numeroLote}</TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {distribuicao.pdvs.map((pdv, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {pdv}
-                            </Badge>
-                          ))}
-                        </div>
+                      <TableCell className="font-medium">
+                        {distribuicao.lotes_producao?.produtos?.nome}
                       </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleEdit(distribuicao)}
-                            className="border-sweet-gold-300 hover:bg-sweet-gold-100"
-                          >
-                            ✏️
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDelete(distribuicao.id)}
-                            className="border-red-300 hover:bg-red-100 text-red-600"
-                          >
-                            🗑️
-                          </Button>
-                        </div>
-                      </TableCell>
+                      <TableCell>{distribuicao.lotes_producao?.codigo_lote}</TableCell>
+                      <TableCell>{distribuicao.quantidade_distribuida}</TableCell>
+                      <TableCell>{new Date(distribuicao.data_distribuicao).toLocaleDateString('pt-BR')}</TableCell>
+                      <TableCell>{distribuicao.distribuidores?.nome}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

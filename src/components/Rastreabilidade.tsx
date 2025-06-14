@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -5,137 +6,64 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Search } from 'lucide-react';
-
-interface Produto {
-  id: string;
-  nome: string;
-  lote: string;
-  dataProducao: string;
-  dataValidade: string;
-  status: 'Em Produção' | 'Em Trânsito' | 'Entregue';
-  distribuidor: string;
-  localizacaoAtual: string;
-}
-
-interface EventoRastreabilidade {
-  data: string;
-  hora: string;
-  evento: string;
-  responsavel: string;
-  localizacao: string;
-}
-
-// Dados de exemplo
-const produtosExemplo: Produto[] = [
-  {
-    id: '1',
-    nome: 'Bolo de Chocolate',
-    lote: 'BC-2023-001',
-    dataProducao: '10/01/2023',
-    dataValidade: '10/04/2023',
-    status: 'Entregue',
-    distribuidor: 'Distribuidora Sul',
-    localizacaoAtual: 'Loja Centro'
-  },
-  {
-    id: '2',
-    nome: 'Torta de Morango',
-    lote: 'TM-2023-042',
-    dataProducao: '15/02/2023',
-    dataValidade: '15/05/2023',
-    status: 'Em Trânsito',
-    distribuidor: 'Distribuidora Norte',
-    localizacaoAtual: 'Centro de Distribuição'
-  },
-  {
-    id: '3',
-    nome: 'Pudim de Leite',
-    lote: 'PL-2023-103',
-    dataProducao: '22/03/2023',
-    dataValidade: '22/06/2023',
-    status: 'Em Produção',
-    distribuidor: 'Distribuidora Leste',
-    localizacaoAtual: 'Fábrica'
-  },
-];
-
-const eventosRastreabilidadeExemplo: Record<string, EventoRastreabilidade[]> = {
-  'BC-2023-001': [
-    {
-      data: '10/01/2023',
-      hora: '08:30',
-      evento: 'Produção Iniciada',
-      responsavel: 'Maria Silva',
-      localizacao: 'Fábrica'
-    },
-    {
-      data: '10/01/2023',
-      hora: '14:45',
-      evento: 'Produção Finalizada',
-      responsavel: 'Maria Silva',
-      localizacao: 'Fábrica'
-    },
-    {
-      data: '11/01/2023',
-      hora: '09:15',
-      evento: 'Saída para Distribuição',
-      responsavel: 'João Pereira',
-      localizacao: 'Centro de Distribuição'
-    },
-    {
-      data: '12/01/2023',
-      hora: '11:30',
-      evento: 'Entrega Realizada',
-      responsavel: 'Carlos Santos',
-      localizacao: 'Loja Centro'
-    }
-  ],
-  'TM-2023-042': [
-    {
-      data: '15/02/2023',
-      hora: '09:00',
-      evento: 'Produção Iniciada',
-      responsavel: 'Ana Oliveira',
-      localizacao: 'Fábrica'
-    },
-    {
-      data: '15/02/2023',
-      hora: '16:20',
-      evento: 'Produção Finalizada',
-      responsavel: 'Ana Oliveira',
-      localizacao: 'Fábrica'
-    },
-    {
-      data: '16/02/2023',
-      hora: '10:45',
-      evento: 'Saída para Distribuição',
-      responsavel: 'Roberto Alves',
-      localizacao: 'Centro de Distribuição'
-    }
-  ],
-  'PL-2023-103': [
-    {
-      data: '22/03/2023',
-      hora: '10:15',
-      evento: 'Produção Iniciada',
-      responsavel: 'Fernanda Lima',
-      localizacao: 'Fábrica'
-    }
-  ]
-};
+import { useLotesProducao } from '@/hooks/useLotesProducao';
+import { useDistribuicoes } from '@/hooks/useDistribuicoes';
 
 export const Rastreabilidade = () => {
   const [termoBusca, setTermoBusca] = useState('');
   const [loteSelecionado, setLoteSelecionado] = useState<string | null>(null);
+  
+  const { data: lotes = [] } = useLotesProducao();
+  const { data: distribuicoes = [] } = useDistribuicoes();
 
-  const produtosFiltrados = produtosExemplo.filter(produto => 
-    produto.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
-    produto.lote.toLowerCase().includes(termoBusca.toLowerCase())
+  const lotesFiltrados = lotes.filter(lote => 
+    lote.produtos?.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
+    lote.codigo_lote.toLowerCase().includes(termoBusca.toLowerCase())
+  );
+
+  const distribuicoesDoLote = distribuicoes.filter(dist => 
+    loteSelecionado && dist.lote_id === loteSelecionado
   );
 
   const handleBusca = (e: React.FormEvent) => {
     e.preventDefault();
-    // Implementação futura: busca no backend
+    // A busca é feita em tempo real através do filtro
+  };
+
+  const getStatusLote = (lote: any) => {
+    const distribuicaoExiste = distribuicoes.some(dist => dist.lote_id === lote.id);
+    
+    if (distribuicaoExiste) {
+      return 'Em Distribuição';
+    }
+    
+    const dataValidade = new Date(lote.data_validade);
+    const hoje = new Date();
+    
+    if (dataValidade < hoje) {
+      return 'Vencido';
+    }
+    
+    return 'Em Produção';
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Em Distribuição':
+        return 'default';
+      case 'Vencido':
+        return 'destructive';
+      default:
+        return 'outline';
+    }
+  };
+
+  const getLocalizacaoAtual = (lote: any) => {
+    const distribuicao = distribuicoes.find(dist => dist.lote_id === lote.id);
+    if (distribuicao) {
+      return distribuicao.distribuidores?.nome || 'Em Distribuição';
+    }
+    return 'Fábrica';
   };
 
   return (
@@ -190,33 +118,33 @@ export const Rastreabilidade = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {produtosFiltrados.map((produto) => (
-                  <TableRow key={produto.id}>
-                    <TableCell className="font-medium">{produto.nome}</TableCell>
-                    <TableCell>{produto.lote}</TableCell>
-                    <TableCell>{produto.dataProducao}</TableCell>
-                    <TableCell>{produto.dataValidade}</TableCell>
-                    <TableCell>
-                      <Badge variant={
-                        produto.status === 'Em Trânsito' ? 'default' :
-                        produto.status === 'Entregue' ? 'secondary' : 'outline'
-                      }>
-                        {produto.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{produto.localizacaoAtual}</TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setLoteSelecionado(produto.lote)}
-                        className="border-brand-yellow-400 text-brand-brown-800 hover:bg-brand-yellow-400"
-                      >
-                        Ver Detalhes
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {lotesFiltrados.map((lote) => {
+                  const status = getStatusLote(lote);
+                  return (
+                    <TableRow key={lote.id}>
+                      <TableCell className="font-medium">{lote.produtos?.nome}</TableCell>
+                      <TableCell>{lote.codigo_lote}</TableCell>
+                      <TableCell>{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
+                      <TableCell>{new Date(lote.data_validade).toLocaleDateString('pt-BR')}</TableCell>
+                      <TableCell>
+                        <Badge variant={getStatusColor(status)}>
+                          {status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{getLocalizacaoAtual(lote)}</TableCell>
+                      <TableCell>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setLoteSelecionado(lote.id)}
+                          className="border-brand-yellow-400 text-brand-brown-800 hover:bg-brand-yellow-400"
+                        >
+                          Ver Detalhes
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>
@@ -229,7 +157,7 @@ export const Rastreabilidade = () => {
           <CardHeader>
             <CardTitle className="text-brand-brown-800">Detalhes de Rastreabilidade</CardTitle>
             <CardDescription>
-              Lote: {loteSelecionado}
+              Lote: {lotes.find(l => l.id === loteSelecionado)?.codigo_lote}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -238,20 +166,37 @@ export const Rastreabilidade = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Data</TableHead>
-                    <TableHead>Hora</TableHead>
                     <TableHead>Evento</TableHead>
                     <TableHead>Responsável</TableHead>
+                    <TableHead>Quantidade</TableHead>
                     <TableHead>Localização</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {eventosRastreabilidadeExemplo[loteSelecionado]?.map((evento, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{evento.data}</TableCell>
-                      <TableCell>{evento.hora}</TableCell>
-                      <TableCell className="font-medium">{evento.evento}</TableCell>
-                      <TableCell>{evento.responsavel}</TableCell>
-                      <TableCell>{evento.localizacao}</TableCell>
+                  {/* Evento de produção */}
+                  {(() => {
+                    const lote = lotes.find(l => l.id === loteSelecionado);
+                    if (!lote) return null;
+                    
+                    return (
+                      <TableRow>
+                        <TableCell>{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
+                        <TableCell className="font-medium">Produção Finalizada</TableCell>
+                        <TableCell>{lote.responsavel}</TableCell>
+                        <TableCell>{lote.quantidade_produzida} unidades</TableCell>
+                        <TableCell>Fábrica</TableCell>
+                      </TableRow>
+                    );
+                  })()}
+                  
+                  {/* Eventos de distribuição */}
+                  {distribuicoesDoLote.map((distribuicao) => (
+                    <TableRow key={distribuicao.id}>
+                      <TableCell>{new Date(distribuicao.data_distribuicao).toLocaleDateString('pt-BR')}</TableCell>
+                      <TableCell className="font-medium">Saída para Distribuição</TableCell>
+                      <TableCell>{distribuicao.responsavel_distribuicao}</TableCell>
+                      <TableCell>{distribuicao.quantidade_distribuida} unidades</TableCell>
+                      <TableCell>{distribuicao.distribuidores?.nome}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
