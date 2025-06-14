@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -139,7 +138,10 @@ export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
         email: signupEmail,
         password: signupPassword,
         options: {
-          emailRedirectTo: `${window.location.origin}/`
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            tipo_usuario: invitation.tipo_usuario
+          }
         }
       });
 
@@ -163,7 +165,7 @@ export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
 
       toast({
         title: "Cadastro realizado!",
-        description: "Sua conta foi criada com sucesso. Verifique seu e-mail para confirmar a conta.",
+        description: `Sua conta foi criada como ${invitation.tipo_usuario === 'fabrica' ? 'Fábrica' : 'Distribuidor'}. Verifique seu e-mail para confirmar a conta.`,
       });
 
       // Limpar formulário

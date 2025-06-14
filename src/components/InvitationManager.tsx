@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,10 +15,12 @@ interface Invitation {
   consumed: boolean;
   created_at: string;
   consumed_at: string | null;
+  tipo_usuario: string;
 }
 
 export const InvitationManager = () => {
   const [email, setEmail] = useState('');
+  const [tipoUsuario, setTipoUsuario] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const { toast } = useToast();
@@ -50,10 +53,10 @@ export const InvitationManager = () => {
 
   const handleCreateInvitation = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
+    if (!email || !tipoUsuario) {
       toast({
-        title: "Campo obrigatório",
-        description: "Digite um e-mail para criar o convite.",
+        title: "Campos obrigatórios",
+        description: "Preencha o e-mail e selecione o tipo de usuário.",
         variant: "destructive"
       });
       return;
@@ -67,7 +70,8 @@ export const InvitationManager = () => {
         .from('sign_up_invitations')
         .insert({
           email,
-          code
+          code,
+          tipo_usuario: tipoUsuario
         });
 
       if (error) {
@@ -81,10 +85,11 @@ export const InvitationManager = () => {
 
       toast({
         title: "Convite criado!",
-        description: `Convite para ${email} criado com código: ${code}`,
+        description: `Convite para ${email} (${tipoUsuario}) criado com código: ${code}`,
       });
 
       setEmail('');
+      setTipoUsuario('');
       await fetchInvitations();
     } catch (error) {
       toast({
@@ -119,7 +124,19 @@ export const InvitationManager = () => {
                 disabled={isLoading}
               />
             </div>
-            <Button type="submit" disabled={isLoading}>
+            <div className="space-y-2">
+              <Label htmlFor="tipo-usuario">Tipo de Usuário</Label>
+              <Select value={tipoUsuario} onValueChange={setTipoUsuario} disabled={isLoading}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o tipo de usuário" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="fabrica">🏭 Fábrica</SelectItem>
+                  <SelectItem value="distribuidor">🚛 Distribuidor</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button type="submit" disabled={isLoading || !tipoUsuario}>
               {isLoading ? 'Criando...' : 'Criar Convite'}
             </Button>
           </form>
@@ -145,6 +162,11 @@ export const InvitationManager = () => {
                 >
                   <div className="space-y-1">
                     <p className="font-medium">{invitation.email}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Tipo: <span className="font-medium">
+                        {invitation.tipo_usuario === 'fabrica' ? '🏭 Fábrica' : '🚛 Distribuidor'}
+                      </span>
+                    </p>
                     <p className="text-sm text-muted-foreground">
                       Código: <span className="font-mono">{invitation.code}</span>
                     </p>
