@@ -63,53 +63,53 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Nova paleta de cores para Doce Doçura
+				// Nova paleta de cores mais claras para Doce Doçura
 				'brand-brown': {
-					50: '#faf9f7',
-					100: '#f3f1ec',
-					200: '#e7e2d9',
-					300: '#d4cbbc',
-					400: '#beb09a',
-					500: '#a8957d',
-					600: '#8a7760',
-					700: '#6b5c47',
-					800: '#4B3821', // Cor primária
-					900: '#3a2b1a'
+					50: '#fdfcfb',
+					100: '#f8f6f2',
+					200: '#f2ede4',
+					300: '#e8dfd1',
+					400: '#ddd0b8',
+					500: '#d1c19f',
+					600: '#baa882',
+					700: '#9d8e6b',
+					800: '#7a6d4f', // Cor primária mais clara
+					900: '#5c5139'
 				},
 				'brand-yellow': {
-					50: '#fffef0',
-					100: '#fffacc',
-					200: '#fff599',
-					300: '#ffeb4d',
-					400: '#FFCC00', // Cor secundária
-					500: '#e6b800',
-					600: '#cc9900',
-					700: '#b38600',
-					800: '#997300',
-					900: '#806000'
+					50: '#fffef7',
+					100: '#fffded',
+					200: '#fffbd6',
+					300: '#fff7b8',
+					400: '#fff28a', // Cor secundária mais clara
+					500: '#ffe85c',
+					600: '#ffd92e',
+					700: '#f5c500',
+					800: '#ccad00',
+					900: '#a39200'
 				},
 				'brand-neutral': {
-					50: '#fafafa',
-					100: '#f5f5f5',
-					200: '#e5e5e5',
-					300: '#d4d4d4',
-					400: '#a3a3a3',
-					500: '#737373',
-					600: '#525252',
-					700: '#404040',
-					800: '#262626',
-					900: '#171717'
+					50: '#fdfdfd',
+					100: '#f9f9f9',
+					200: '#f0f0f0',
+					300: '#e6e6e6',
+					400: '#c4c4c4',
+					500: '#9e9e9e',
+					600: '#757575',
+					700: '#616161',
+					800: '#424242',
+					900: '#212121'
 				},
 
-				'primaria': '#4B3821',   // Marrom
-				'secundaria': '#FFCC00', // Amarelo
+				'primaria': '#7a6d4f',   // Marrom mais claro
+				'secundaria': '#fff28a', // Amarelo mais claro
 				neutra: {
 					'branco': '#FFFFFF',
-					'cinza1': '#F5F5F5',
-					'cinza2': '#E5E5E5',
-					'cinza3': '#D4D4D4',
-					'cinza4': '#A3A3A3',
-					'cinza5': '#737373',
+					'cinza1': '#f9f9f9',
+					'cinza2': '#f0f0f0',
+					'cinza3': '#e6e6e6',
+					'cinza4': '#c4c4c4',
+					'cinza5': '#9e9e9e',
 				},
 
 			},
@@ -147,10 +147,10 @@ export default {
 				},
 				'brand-glow': {
 					"0%, 100%": {
-						boxShadow: "0 0 20px rgba(255, 204, 0, 0.3)"
+						boxShadow: "0 0 20px rgba(255, 242, 138, 0.3)"
 					},
 					"50%": {
-						boxShadow: "0 0 30px rgba(255, 204, 0, 0.5)"
+						boxShadow: "0 0 30px rgba(255, 242, 138, 0.5)"
 					}
 				}
 			},
@@ -158,11 +158,12 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.3s ease-out',
+				'fade-out': 'fade-out 0.3s ease-out',
 				'brand-glow': 'brand-glow 2s ease-in-out infinite'
 			},
 			backgroundImage: {
-				'brand-gradient': 'linear-gradient(135deg, #fafafa 0%, #fff599 100%)',
-				'brand-gradient-dark': 'linear-gradient(135deg, #4B3821 0%, #FFCC00 100%)'
+				'brand-gradient': 'linear-gradient(135deg, #fdfdfd 0%, #fffbd6 100%)',
+				'brand-gradient-dark': 'linear-gradient(135deg, #7a6d4f 0%, #fff28a 100%)'
 			}
 		}
 	},

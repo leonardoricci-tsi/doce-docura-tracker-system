@@ -3,87 +3,87 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Doce Doçura Design System */
+/* Doce Doçura Design System - Cores Claras */
 
 @layer base {
   :root {
-    --background: 250 250 250; /* brand-neutral-50 */
-    --foreground: 75 56 33; /* brand-brown-800 */
+    --background: 253 253 253; /* brand-neutral-50 mais claro */
+    --foreground: 122 109 79; /* brand-brown-800 mais claro */
 
     --card: 255 255 255;
-    --card-foreground: 75 56 33;
+    --card-foreground: 122 109 79;
 
     --popover: 255 255 255;
-    --popover-foreground: 75 56 33;
+    --popover-foreground: 122 109 79;
 
-    --primary: 75 56 33; /* brand-brown-800 */
+    --primary: 122 109 79; /* brand-brown-800 mais claro */
     --primary-foreground: 255 255 255;
 
-    --secondary: 255 204 0; /* brand-yellow-400 */
-    --secondary-foreground: 75 56 33;
+    --secondary: 255 242 138; /* brand-yellow-400 mais claro */
+    --secondary-foreground: 122 109 79;
 
-    --muted: 229 229 229; /* brand-neutral-200 */
-    --muted-foreground: 115 115 115;
+    --muted: 240 240 240; /* brand-neutral-200 mais claro */
+    --muted-foreground: 158 158 158;
 
-    --accent: 255 250 204; /* brand-yellow-100 */
-    --accent-foreground: 75 56 33;
+    --accent: 255 251 214; /* brand-yellow-200 mais claro */
+    --accent-foreground: 122 109 79;
 
     --destructive: 239 68 68;
     --destructive-foreground: 255 255 255;
 
-    --border: 212 212 212; /* brand-neutral-300 */
-    --input: 212 212 212;
-    --ring: 255 204 0;
+    --border: 230 230 230; /* brand-neutral-300 mais claro */
+    --input: 230 230 230;
+    --ring: 255 242 138;
 
     --radius: 0.75rem;
 
     --sidebar-background: 255 255 255;
-    --sidebar-foreground: 75 56 33;
-    --sidebar-primary: 75 56 33;
+    --sidebar-foreground: 122 109 79;
+    --sidebar-primary: 122 109 79;
     --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 255 250 204;
-    --sidebar-accent-foreground: 75 56 33;
-    --sidebar-border: 212 212 212;
-    --sidebar-ring: 255 204 0;
+    --sidebar-accent: 255 251 214;
+    --sidebar-accent-foreground: 122 109 79;
+    --sidebar-border: 230 230 230;
+    --sidebar-ring: 255 242 138;
   }
 
   .dark {
-    --background: 75 56 33; /* brand-brown-800 */
-    --foreground: 250 250 250;
+    --background: 122 109 79; /* brand-brown-800 */
+    --foreground: 253 253 253;
 
-    --card: 58 43 26; /* brand-brown-900 */
-    --card-foreground: 250 250 250;
+    --card: 92 83 57; /* brand-brown-900 mais claro */
+    --card-foreground: 253 253 253;
 
-    --popover: 58 43 26;
-    --popover-foreground: 250 250 250;
+    --popover: 92 83 57;
+    --popover-foreground: 253 253 253;
 
-    --primary: 255 204 0; /* brand-yellow-400 */
-    --primary-foreground: 75 56 33;
+    --primary: 255 242 138; /* brand-yellow-400 mais claro */
+    --primary-foreground: 122 109 79;
 
-    --secondary: 107 92 71; /* brand-brown-700 */
-    --secondary-foreground: 250 250 250;
+    --secondary: 157 142 107; /* brand-brown-700 mais claro */
+    --secondary-foreground: 253 253 253;
 
-    --muted: 107 92 71;
-    --muted-foreground: 212 212 212;
+    --muted: 157 142 107;
+    --muted-foreground: 230 230 230;
 
-    --accent: 138 119 96; /* brand-brown-600 */
-    --accent-foreground: 255 250 204;
+    --accent: 186 168 130; /* brand-brown-600 mais claro */
+    --accent-foreground: 255 251 214;
 
     --destructive: 239 68 68;
     --destructive-foreground: 255 255 255;
 
-    --border: 138 119 96;
-    --input: 138 119 96;
-    --ring: 255 204 0;
+    --border: 186 168 130;
+    --input: 186 168 130;
+    --ring: 255 242 138;
 
-    --sidebar-background: 58 43 26;
-    --sidebar-foreground: 250 250 250;
-    --sidebar-primary: 255 204 0;
-    --sidebar-primary-foreground: 75 56 33;
-    --sidebar-accent: 138 119 96;
-    --sidebar-accent-foreground: 255 250 204;
-    --sidebar-border: 138 119 96;
-    --sidebar-ring: 255 204 0;
+    --sidebar-background: 92 83 57;
+    --sidebar-foreground: 253 253 253;
+    --sidebar-primary: 255 242 138;
+    --sidebar-primary-foreground: 122 109 79;
+    --sidebar-accent: 186 168 130;
+    --sidebar-accent-foreground: 255 251 214;
+    --sidebar-border: 186 168 130;
+    --sidebar-ring: 255 242 138;
   }
 }
 
@@ -100,34 +100,34 @@
 
 @layer components {
   .brand-gradient {
-    @apply bg-gradient-to-br from-brand-neutral-50 via-brand-yellow-50 to-brand-yellow-100;
+    @apply bg-gradient-to-br from-brand-neutral-50 via-brand-yellow-50 to-brand-yellow-200;
   }
   
   .brand-card {
-    @apply bg-white/90 backdrop-blur-sm border border-brand-neutral-300 rounded-xl shadow-lg;
+    @apply bg-white/95 backdrop-blur-sm border border-brand-neutral-200 rounded-xl shadow-sm;
   }
   
   .brand-button {
-    @apply bg-brand-yellow-400 hover:bg-brand-yellow-500 text-brand-brown-800 font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
+    @apply bg-brand-yellow-400 hover:bg-brand-yellow-500 text-brand-brown-700 font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md;
   }
   
   .brand-button-primary {
-    @apply bg-brand-brown-800 hover:bg-brand-brown-900 text-white font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
+    @apply bg-brand-brown-600 hover:bg-brand-brown-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md;
   }
   
   .validation-error {
-    @apply border-red-300 bg-red-50;
+    @apply border-red-200 bg-red-50;
   }
   
   .date-danger {
-    @apply bg-red-100 text-red-800 border-red-200;
+    @apply bg-red-50 text-red-700 border-red-100;
   }
   
   .date-warning {
-    @apply bg-yellow-100 text-yellow-800 border-yellow-200;
+    @apply bg-yellow-50 text-yellow-700 border-yellow-100;
   }
   
   .date-safe {
-    @apply bg-green-100 text-green-800 border-green-200;
+    @apply bg-green-50 text-green-700 border-green-100;
   }
 }
