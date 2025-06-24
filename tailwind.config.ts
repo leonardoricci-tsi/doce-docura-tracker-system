@@ -112,6 +112,22 @@ export default {
 					'cinza5': '#9e9e9e',
 				},
 
+				'caramelo': '#E3A24B',
+				brand: {
+					chocolate: '#5C3A21',
+					melClaro: '#F9E5C0',
+					trufa: '#3B2F2F',
+					begeSuave: '#F2E8CF',
+					rosaDoce: '#F4C2C2',
+					verdeArtesanal: '#A3A380',
+					caramelo: '#A0522D',
+					doceLeite: '#B5651D',
+					mel: '#D4A373',
+					cafe: '#5C3A21',
+					marrom: '#8B5E3C',
+				},
+
+
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
