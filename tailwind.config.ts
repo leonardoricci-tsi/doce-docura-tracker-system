@@ -63,11 +63,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Nova paleta de cores mais claras para Doce Doçura
+				// Nova paleta de cores com brand-brown-200 igual ao header
 				'brand-brown': {
 					50: '#fdfcfb',
 					100: '#f8f6f2',
-					200: '#f2ede4',
+					200: '#7a6d4f', // Mesma cor do header (brand-brown-800)
 					300: '#e8dfd1',
 					400: '#ddd0b8',
 					500: '#d1c19f',
@@ -81,7 +81,7 @@ export default {
 					100: '#fffded',
 					200: '#fffbd6',
 					300: '#fff7b8',
-					400: '#fff28a', // Cor secundária mais clara
+					400: '#fffacd', // Amarelo mais claro
 					500: '#ffe85c',
 					600: '#ffd92e',
 					700: '#f5c500',
@@ -102,7 +102,7 @@ export default {
 				},
 
 				'primaria': '#7a6d4f',   // Marrom mais claro
-				'secundaria': '#fff28a', // Amarelo mais claro
+				'secundaria': '#fffacd', // Amarelo mais claro
 				neutra: {
 					'branco': '#FFFFFF',
 					'cinza1': '#f9f9f9',
