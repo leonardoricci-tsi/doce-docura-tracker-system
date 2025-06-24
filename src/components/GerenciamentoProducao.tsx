@@ -146,19 +146,19 @@ export const GerenciamentoProducao = () => {
   return (
     <div className="space-y-8">
       {/* Form */}
-      <Card className="sweet-card bg-brand-yellow-200">
+      <Card className="sweet-card bg-brand-brown-200 border-brand-brown-300">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-sweet-gold-800">
+          <CardTitle className="flex items-center gap-2 text-brand-brown-800">
             🏭 {editingId ? 'Editar Produção' : 'Nova Produção'}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-brand-brown-700">
             {editingId ? 'Atualize os dados da produção' : 'Registre uma nova produção de doces'}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="numeroLote">Número do Lote *</Label>
+              <Label htmlFor="numeroLote" className="text-brand-brown-800">Número do Lote *</Label>
               <Input
                 id="numeroLote"
                 value={formData.numeroLote}
@@ -169,7 +169,7 @@ export const GerenciamentoProducao = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="produto">Nome do Produto *</Label>
+              <Label htmlFor="produto" className="text-brand-brown-800">Nome do Produto *</Label>
               <Select value={formData.produto} onValueChange={(value) => setFormData(prev => ({ ...prev, produto: value }))}>
                 <SelectTrigger className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none">
                   <SelectValue placeholder="Selecione o produto" />
@@ -183,7 +183,7 @@ export const GerenciamentoProducao = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="sabor">Sabor</Label>
+              <Label htmlFor="sabor" className="text-brand-brown-800">Sabor</Label>
               <Select value={formData.sabor} onValueChange={(value) => setFormData(prev => ({ ...prev, sabor: value }))}>
                 <SelectTrigger className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none">
                   <SelectValue placeholder="Selecione o sabor" />
@@ -197,7 +197,7 @@ export const GerenciamentoProducao = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="quantidade">Quantidade Produzida *</Label>
+              <Label htmlFor="quantidade" className="text-brand-brown-800">Quantidade Produzida *</Label>
               <Input
                 id="quantidade"
                 type="number"
@@ -209,7 +209,7 @@ export const GerenciamentoProducao = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dataFabricacao">Data de Fabricação *</Label>
+              <Label htmlFor="dataFabricacao" className="text-brand-brown-800">Data de Fabricação *</Label>
               <Input
                 id="dataFabricacao"
                 type="date"
@@ -220,7 +220,7 @@ export const GerenciamentoProducao = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dataValidade">Data de Validade *</Label>
+              <Label htmlFor="dataValidade" className="text-brand-brown-800">Data de Validade *</Label>
               <Input
                 id="dataValidade"
                 type="date"
@@ -231,7 +231,7 @@ export const GerenciamentoProducao = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="notaFiscal">Nota Fiscal</Label>
+              <Label htmlFor="notaFiscal" className="text-brand-brown-800">Nota Fiscal</Label>
               <Input
                 id="notaFiscal"
                 value={formData.notaFiscal}
@@ -242,7 +242,7 @@ export const GerenciamentoProducao = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="distribuidor">Distribuidor</Label>
+              <Label htmlFor="distribuidor" className="text-brand-brown-800">Distribuidor</Label>
               <Select value={formData.distribuidor} onValueChange={(value) => setFormData(prev => ({ ...prev, distribuidor: value }))}>
                 <SelectTrigger className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none">
                   <SelectValue placeholder="Selecione o distribuidor" />
@@ -270,52 +270,52 @@ export const GerenciamentoProducao = () => {
       </Card>
 
       {/* Table */}
-      <Card className="sweet-card  bg-brand-yellow-200">
+      <Card className="sweet-card bg-brand-brown-200 border-brand-brown-300">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-sweet-gold-800">
+          <CardTitle className="flex items-center gap-2 text-brand-brown-800">
             📋 Produções Cadastradas
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-brand-brown-700">
             Lista de todas as produções registradas
           </CardDescription>
         </CardHeader>
         <CardContent>
           {producoes.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-sweet-gold-600">Nenhuma produção cadastrada ainda.</p>
-              <p className="text-sm text-sweet-gold-500">Cadastre sua primeira produção usando o formulário acima.</p>
+              <p className="text-brand-brown-700">Nenhuma produção cadastrada ainda.</p>
+              <p className="text-sm text-brand-brown-600">Cadastre sua primeira produção usando o formulário acima.</p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Lote</TableHead>
-                  <TableHead>Produto</TableHead>
-                  <TableHead>Sabor</TableHead>
-                  <TableHead>Quantidade</TableHead>
-                  <TableHead>Data Fab.</TableHead>
-                  <TableHead>Data Val.</TableHead>
-                  <TableHead>Distribuidor</TableHead>
-                  <TableHead>Ações</TableHead>
+                  <TableHead className="text-brand-brown-800">Lote</TableHead>
+                  <TableHead className="text-brand-brown-800">Produto</TableHead>
+                  <TableHead className="text-brand-brown-800">Sabor</TableHead>
+                  <TableHead className="text-brand-brown-800">Quantidade</TableHead>
+                  <TableHead className="text-brand-brown-800">Data Fab.</TableHead>
+                  <TableHead className="text-brand-brown-800">Data Val.</TableHead>
+                  <TableHead className="text-brand-brown-800">Distribuidor</TableHead>
+                  <TableHead className="text-brand-brown-800">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {producoes.map((producao) => (
                   <TableRow key={producao.id}>
-                    <TableCell className="font-medium">{producao.numeroLote}</TableCell>
-                    <TableCell>{producao.produto}</TableCell>
-                    <TableCell>{producao.sabor}</TableCell>
-                    <TableCell>{producao.quantidadeProduzida}</TableCell>
-                    <TableCell>{new Date(producao.dataFabricacao).toLocaleDateString()}</TableCell>
-                    <TableCell>{new Date(producao.dataValidade).toLocaleDateString()}</TableCell>
-                    <TableCell>{producao.distribuidor}</TableCell>
+                    <TableCell className="font-medium text-brand-brown-800">{producao.numeroLote}</TableCell>
+                    <TableCell className="text-brand-brown-800">{producao.produto}</TableCell>
+                    <TableCell className="text-brand-brown-800">{producao.sabor}</TableCell>
+                    <TableCell className="text-brand-brown-800">{producao.quantidadeProduzida}</TableCell>
+                    <TableCell className="text-brand-brown-800">{new Date(producao.dataFabricacao).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-brand-brown-800">{new Date(producao.dataValidade).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-brand-brown-800">{producao.distribuidor}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => handleEdit(producao)}
-                          className="border-sweet-gold-300 hover:bg-sweet-gold-100"
+                          className="border-brand-brown-400 hover:bg-brand-brown-100 text-brand-brown-800"
                         >
                           ✏️
                         </Button>
