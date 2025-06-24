@@ -30,11 +30,7 @@ export const DistribuidorDashboard = ({ currentUser, onLogout }: DistribuidorDas
                 <p className="text-sm text-brand-yellow-100">Bem-vindo,</p>
                 <p className="font-medium text-white">{currentUser}</p>
               </div>
-              <Button 
-                onClick={onLogout} 
-                variant="outline" 
-                className="border-brand-yellow-400 bg-brand-yellow-400 text-brand-brown-800 hover:bg-brand-yellow-300 hover:text-brand-brown-900 font-semibold"
-              >
+              <Button onClick={onLogout} variant="outline" className="border-brand-yellow-400 text-brand-yellow-400 hover:bg-brand-yellow-400 hover:text-brand-brown-800">
                 Sair
               </Button>
             </div>
