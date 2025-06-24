@@ -69,26 +69,26 @@ export const Rastreabilidade = () => {
   return (
     <div className="space-y-6">
       {/* Busca */}
-      <Card className="brand-card">
+      <Card className="bg-brand-brown-200 border-brand-brown-300">
         <CardHeader>
           <CardTitle className="text-brand-brown-800">Rastreabilidade de Produtos</CardTitle>
-          <CardDescription>
+          <CardDescription className="text-brand-brown-700">
             Busque por nome do produto ou número do lote para rastrear
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleBusca} className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-brand-brown-600" />
               <Input
                 type="search"
                 placeholder="Buscar por produto ou lote..."
-                className="pl-8"
+                className="pl-8 bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none"
                 value={termoBusca}
                 onChange={(e) => setTermoBusca(e.target.value)}
               />
             </div>
-            <Button type="submit" className="bg-brand-brown-800 hover:bg-brand-brown-900">
+            <Button type="submit" className="bg-brand-brown-800 hover:bg-brand-brown-900 text-white">
               Buscar
             </Button>
           </form>
@@ -96,25 +96,25 @@ export const Rastreabilidade = () => {
       </Card>
 
       {/* Resultados */}
-      <Card className="brand-card">
+      <Card className="bg-brand-brown-200 border-brand-brown-300">
         <CardHeader>
           <CardTitle className="text-brand-brown-800">Histórico de Rastreabilidade</CardTitle>
-          <CardDescription>
+          <CardDescription className="text-brand-brown-700">
             Visualize todo o histórico de movimentação dos produtos
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border border-brand-neutral-300">
+          <div className="rounded-md border border-brand-brown-400 bg-brand-yellow-100">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Produto</TableHead>
-                  <TableHead>Lote</TableHead>
-                  <TableHead>Data Produção</TableHead>
-                  <TableHead>Data Validade</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Localização Atual</TableHead>
-                  <TableHead>Ações</TableHead>
+                  <TableHead className="text-brand-brown-800">Produto</TableHead>
+                  <TableHead className="text-brand-brown-800">Lote</TableHead>
+                  <TableHead className="text-brand-brown-800">Data Produção</TableHead>
+                  <TableHead className="text-brand-brown-800">Data Validade</TableHead>
+                  <TableHead className="text-brand-brown-800">Status</TableHead>
+                  <TableHead className="text-brand-brown-800">Localização Atual</TableHead>
+                  <TableHead className="text-brand-brown-800">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -122,22 +122,22 @@ export const Rastreabilidade = () => {
                   const status = getStatusLote(lote);
                   return (
                     <TableRow key={lote.id}>
-                      <TableCell className="font-medium">{lote.produtos?.nome}</TableCell>
-                      <TableCell>{lote.codigo_lote}</TableCell>
-                      <TableCell>{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
-                      <TableCell>{new Date(lote.data_validade).toLocaleDateString('pt-BR')}</TableCell>
+                      <TableCell className="font-medium text-brand-brown-800">{lote.produtos?.nome}</TableCell>
+                      <TableCell className="text-brand-brown-800">{lote.codigo_lote}</TableCell>
+                      <TableCell className="text-brand-brown-800">{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
+                      <TableCell className="text-brand-brown-800">{new Date(lote.data_validade).toLocaleDateString('pt-BR')}</TableCell>
                       <TableCell>
                         <Badge variant={getStatusColor(status)}>
                           {status}
                         </Badge>
                       </TableCell>
-                      <TableCell>{getLocalizacaoAtual(lote)}</TableCell>
+                      <TableCell className="text-brand-brown-800">{getLocalizacaoAtual(lote)}</TableCell>
                       <TableCell>
                         <Button 
                           variant="outline" 
                           size="sm"
                           onClick={() => setLoteSelecionado(lote.id)}
-                          className="border-brand-yellow-400 text-brand-brown-800 hover:bg-brand-yellow-400"
+                          className="border-brand-brown-400 text-brand-brown-800 hover:bg-brand-brown-100"
                         >
                           Ver Detalhes
                         </Button>
@@ -153,23 +153,23 @@ export const Rastreabilidade = () => {
 
       {/* Detalhamento de rastreabilidade */}
       {loteSelecionado && (
-        <Card className="brand-card">
+        <Card className="bg-brand-brown-200 border-brand-brown-300">
           <CardHeader>
             <CardTitle className="text-brand-brown-800">Detalhes de Rastreabilidade</CardTitle>
-            <CardDescription>
+            <CardDescription className="text-brand-brown-700">
               Lote: {lotes.find(l => l.id === loteSelecionado)?.codigo_lote}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="rounded-md border border-brand-neutral-300">
+            <div className="rounded-md border border-brand-brown-400 bg-brand-yellow-100">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Data</TableHead>
-                    <TableHead>Evento</TableHead>
-                    <TableHead>Responsável</TableHead>
-                    <TableHead>Quantidade</TableHead>
-                    <TableHead>Localização</TableHead>
+                    <TableHead className="text-brand-brown-800">Data</TableHead>
+                    <TableHead className="text-brand-brown-800">Evento</TableHead>
+                    <TableHead className="text-brand-brown-800">Responsável</TableHead>
+                    <TableHead className="text-brand-brown-800">Quantidade</TableHead>
+                    <TableHead className="text-brand-brown-800">Localização</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -180,11 +180,11 @@ export const Rastreabilidade = () => {
                     
                     return (
                       <TableRow>
-                        <TableCell>{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
-                        <TableCell className="font-medium">Produção Finalizada</TableCell>
-                        <TableCell>{lote.responsavel}</TableCell>
-                        <TableCell>{lote.quantidade_produzida} unidades</TableCell>
-                        <TableCell>Fábrica</TableCell>
+                        <TableCell className="text-brand-brown-800">{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
+                        <TableCell className="font-medium text-brand-brown-800">Produção Finalizada</TableCell>
+                        <TableCell className="text-brand-brown-800">{lote.responsavel}</TableCell>
+                        <TableCell className="text-brand-brown-800">{lote.quantidade_produzida} unidades</TableCell>
+                        <TableCell className="text-brand-brown-800">Fábrica</TableCell>
                       </TableRow>
                     );
                   })()}
@@ -192,11 +192,11 @@ export const Rastreabilidade = () => {
                   {/* Eventos de distribuição */}
                   {distribuicoesDoLote.map((distribuicao) => (
                     <TableRow key={distribuicao.id}>
-                      <TableCell>{new Date(distribuicao.data_distribuicao).toLocaleDateString('pt-BR')}</TableCell>
-                      <TableCell className="font-medium">Saída para Distribuição</TableCell>
-                      <TableCell>{distribuicao.responsavel_distribuicao}</TableCell>
-                      <TableCell>{distribuicao.quantidade_distribuida} unidades</TableCell>
-                      <TableCell>{distribuicao.distribuidores?.nome}</TableCell>
+                      <TableCell className="text-brand-brown-800">{new Date(distribuicao.data_distribuicao).toLocaleDateString('pt-BR')}</TableCell>
+                      <TableCell className="font-medium text-brand-brown-800">Saída para Distribuição</TableCell>
+                      <TableCell className="text-brand-brown-800">{distribuicao.responsavel_distribuicao}</TableCell>
+                      <TableCell className="text-brand-brown-800">{distribuicao.quantidade_distribuida} unidades</TableCell>
+                      <TableCell className="text-brand-brown-800">{distribuicao.distribuidores?.nome}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -206,7 +206,7 @@ export const Rastreabilidade = () => {
               <Button 
                 variant="outline" 
                 onClick={() => setLoteSelecionado(null)}
-                className="border-brand-neutral-300 text-brand-brown-800"
+                className="border-brand-brown-400 text-brand-brown-800 hover:bg-brand-brown-100"
               >
                 Fechar Detalhes
               </Button>

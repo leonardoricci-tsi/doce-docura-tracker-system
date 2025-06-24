@@ -49,49 +49,49 @@ export const DashboardAnalytics = () => {
     <div className="space-y-8">
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="sweet-card">
+        <Card className="bg-brand-brown-200 border-brand-brown-300">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-sweet-pink-100 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-brand-yellow-200 rounded-full flex items-center justify-center">
                 <span className="text-2xl">🏭</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-sweet-gold-800">3</p>
-                <p className="text-sm text-sweet-gold-600">Lotes Ativos</p>
+                <p className="text-2xl font-bold text-brand-brown-800">3</p>
+                <p className="text-sm text-brand-brown-600">Lotes Ativos</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="sweet-card">
+        <Card className="bg-brand-brown-200 border-brand-brown-300">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-sweet-gold-100 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-brand-yellow-200 rounded-full flex items-center justify-center">
                 <span className="text-2xl">📦</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-sweet-gold-800">230</p>
-                <p className="text-sm text-sweet-gold-600">Produtos Produzidos</p>
+                <p className="text-2xl font-bold text-brand-brown-800">230</p>
+                <p className="text-sm text-brand-brown-600">Produtos Produzidos</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="sweet-card">
+        <Card className="bg-brand-brown-200 border-brand-brown-300">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                 <span className="text-2xl">🚛</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-sweet-gold-800">3</p>
-                <p className="text-sm text-sweet-gold-600">Distribuidores</p>
+                <p className="text-2xl font-bold text-brand-brown-800">3</p>
+                <p className="text-sm text-brand-brown-600">Distribuidores</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="sweet-card">
+        <Card className="bg-brand-brown-200 border-brand-brown-300">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
@@ -99,7 +99,7 @@ export const DashboardAnalytics = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold text-red-600">2</p>
-                <p className="text-sm text-sweet-gold-600">Próximos ao Vencimento</p>
+                <p className="text-sm text-brand-brown-600">Próximos ao Vencimento</p>
               </div>
             </div>
           </CardContent>
@@ -109,12 +109,12 @@ export const DashboardAnalytics = () => {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Bar Chart - Sabores */}
-        <Card className="sweet-card">
+        <Card className="bg-brand-brown-200 border-brand-brown-300">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-sweet-gold-800">
+            <CardTitle className="flex items-center gap-2 text-brand-brown-800">
               📊 Produção por Sabor
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-brand-brown-700">
               Comparação da quantidade produzida por sabor
             </CardDescription>
           </CardHeader>
@@ -132,12 +132,12 @@ export const DashboardAnalytics = () => {
         </Card>
 
         {/* Pie Chart - Regiões */}
-        <Card className="sweet-card">
+        <Card className="bg-brand-brown-200 border-brand-brown-300">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-sweet-gold-800">
+            <CardTitle className="flex items-center gap-2 text-brand-brown-800">
               🗺️ Distribuição por Região
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-brand-brown-700">
               Volume de distribuição por região geográfica
             </CardDescription>
           </CardHeader>
@@ -166,12 +166,12 @@ export const DashboardAnalytics = () => {
       </div>
 
       {/* Products Near Expiration */}
-      <Card className="sweet-card">
+      <Card className="bg-brand-brown-200 border-brand-brown-300">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-sweet-gold-800">
+          <CardTitle className="flex items-center gap-2 text-brand-brown-800">
             ⚠️ Produtos Próximos ao Vencimento
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-brand-brown-700">
             Lista prioritária de produtos que precisam de atenção
           </CardDescription>
         </CardHeader>
@@ -179,8 +179,8 @@ export const DashboardAnalytics = () => {
           {produtosProximosVencimento.length === 0 ? (
             <div className="text-center py-8">
               <span className="text-6xl">✅</span>
-              <p className="text-sweet-gold-600 mt-4">Nenhum produto próximo ao vencimento!</p>
-              <p className="text-sm text-sweet-gold-500">Todos os produtos estão dentro do prazo de validade seguro.</p>
+              <p className="text-brand-brown-700 mt-4">Nenhum produto próximo ao vencimento!</p>
+              <p className="text-sm text-brand-brown-600">Todos os produtos estão dentro do prazo de validade seguro.</p>
             </div>
           ) : (
             <div className="space-y-4">
