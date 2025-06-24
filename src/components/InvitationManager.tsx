@@ -103,99 +103,102 @@ export const InvitationManager = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Gerenciar Convites</CardTitle>
-          <CardDescription>
-            Crie convites para permitir que novos usuários se cadastrem no sistema
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleCreateInvitation} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">E-mail do Convidado</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Digite o e-mail da pessoa"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="tipo-usuario">Tipo de Usuário</Label>
-              <Select value={tipoUsuario} onValueChange={setTipoUsuario} disabled={isLoading}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o tipo de usuário" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="fabrica">🏭 Fábrica</SelectItem>
-                  <SelectItem value="distribuidor">🚛 Distribuidor</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button type="submit" disabled={isLoading || !tipoUsuario}>
-              {isLoading ? 'Criando...' : 'Criar Convite'}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+    <div className="min-h-screen bg-brand-yellow-400 p-6">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <Card className="bg-white">
+          <CardHeader>
+            <CardTitle className="text-2xl text-brand-brown-800">Gerenciar Convites</CardTitle>
+            <CardDescription className="text-brand-brown-600">
+              Crie convites para permitir que novos usuários se cadastrem no sistema
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleCreateInvitation} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-brand-brown-700">E-mail do Convidado</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Digite o e-mail da pessoa"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  className="bg-brand-yellow-100 text-brand-brown-700"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tipo-usuario" className="text-brand-brown-700">Tipo de Usuário</Label>
+                <Select value={tipoUsuario} onValueChange={setTipoUsuario} disabled={isLoading}>
+                  <SelectTrigger className="bg-brand-yellow-100 text-brand-brown-700">
+                    <SelectValue placeholder="Selecione o tipo de usuário" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fabrica">🏭 Fábrica</SelectItem>
+                    <SelectItem value="distribuidor">🚛 Distribuidor</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button type="submit" disabled={isLoading || !tipoUsuario} className="brand-button-primary">
+                {isLoading ? 'Criando...' : 'Criar Convite'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Convites Enviados</CardTitle>
-          <CardDescription>
-            Lista de todos os convites criados
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {invitations.length === 0 ? (
-              <p className="text-muted-foreground">Nenhum convite criado ainda.</p>
-            ) : (
-              invitations.map((invitation) => (
-                <div
-                  key={invitation.id}
-                  className="flex items-center justify-between p-4 border rounded-lg"
-                >
-                  <div className="space-y-1">
-                    <p className="font-medium">{invitation.email}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Tipo: <span className="font-medium">
-                        {invitation.tipo_usuario === 'fabrica' ? '🏭 Fábrica' : '🚛 Distribuidor'}
-                      </span>
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Código: <span className="font-mono">{invitation.code}</span>
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Criado em: {new Date(invitation.created_at).toLocaleDateString('pt-BR')}
-                    </p>
-                    {invitation.consumed_at && (
-                      <p className="text-xs text-muted-foreground">
-                        Usado em: {new Date(invitation.consumed_at).toLocaleDateString('pt-BR')}
+        <Card className="bg-white">
+          <CardHeader>
+            <CardTitle className="text-brand-brown-800">Convites Enviados</CardTitle>
+            <CardDescription className="text-brand-brown-600">
+              Lista de todos os convites criados
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {invitations.length === 0 ? (
+                <p className="text-brand-brown-600">Nenhum convite criado ainda.</p>
+              ) : (
+                invitations.map((invitation) => (
+                  <div
+                    key={invitation.id}
+                    className="flex items-center justify-between p-4 border border-brand-yellow-200 rounded-lg bg-brand-yellow-50"
+                  >
+                    <div className="space-y-1">
+                      <p className="font-medium text-brand-brown-800">{invitation.email}</p>
+                      <p className="text-sm text-brand-brown-600">
+                        Tipo: <span className="font-medium">
+                          {invitation.tipo_usuario === 'fabrica' ? '🏭 Fábrica' : '🚛 Distribuidor'}
+                        </span>
                       </p>
-                    )}
+                      <p className="text-sm text-brand-brown-600">
+                        Código: <span className="font-mono">{invitation.code}</span>
+                      </p>
+                      <p className="text-xs text-brand-brown-500">
+                        Criado em: {new Date(invitation.created_at).toLocaleDateString('pt-BR')}
+                      </p>
+                      {invitation.consumed_at && (
+                        <p className="text-xs text-brand-brown-500">
+                          Usado em: {new Date(invitation.consumed_at).toLocaleDateString('pt-BR')}
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          invitation.consumed
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}
+                      >
+                        {invitation.consumed ? 'Usado' : 'Pendente'}
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        invitation.consumed
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}
-                    >
-                      {invitation.consumed ? 'Usado' : 'Pendente'}
-                    </span>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </CardContent>
-      </Card>
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

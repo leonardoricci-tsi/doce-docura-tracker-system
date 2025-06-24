@@ -25,7 +25,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen sweet-gradient">
+    <div className="min-h-screen bg-brand-yellow-400">
       {userRole === 'fabrica' ? (
         <FabricaDashboard currentUser={currentUser} onLogout={handleLogout} />
       ) : (

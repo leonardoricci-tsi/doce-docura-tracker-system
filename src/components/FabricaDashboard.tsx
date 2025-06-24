@@ -41,9 +41,9 @@ export const FabricaDashboard = ({ currentUser, onLogout }: FabricaDashboardProp
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 brand-gradient min-h-screen">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-brand-yellow-400 min-h-screen">
         <Tabs defaultValue="producao" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8 bg-white border border-brand-neutral-300">
+          <TabsList className="grid w-full grid-cols-3 mb-8 bg-brand-yellow-300 border border-brand-neutral-300">
             <TabsTrigger value="producao" className="flex items-center gap-2 data-[state=active]:bg-brand-yellow-400 data-[state=active]:text-brand-brown-800">
               🏭 Produção
             </TabsTrigger>
