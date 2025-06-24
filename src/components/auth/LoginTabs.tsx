@@ -12,7 +12,7 @@ interface LoginTabsProps {
 export const LoginTabs = ({ onLogin, isLoading }: LoginTabsProps) => {
   return (
     <Tabs defaultValue="fabrica" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 mb-6 bg-brand-yellow-200 text-brand-brown-700">
+      <TabsList className="grid w-full grid-cols-2 mb-6 bg-brand-yellow-300 text-brand-brown-700">
         <TabsTrigger
           value="fabrica"
           className="flex items-center gap-2 transform transition duration-200 data-[state=active]:scale-105 data-[state=active]:bg-brand-yellow-400 data-[state=active]:text-brand-brown-800"
