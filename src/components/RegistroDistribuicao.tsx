@@ -170,20 +170,20 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
 
   return (
     <div className="space-y-8">
-      <Card className="bg-brand-doceLeite border-brand-marrom">
+      <Card className="bg-brand-brown-100 border-brand-marrom">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-brand-begeSuave font-bold">
+          <CardTitle className="flex items-center gap-2 text-brand-brown-800 font-bold">
             🚛 {editingId ? 'Editar Distribuição' : 'Nova Distribuição'}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className = 'text-brand-brown-800'>
             {editingId ? 'Atualize os dados da distribuição' : 'Registre uma nova distribuição de produtos'}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="produto" className="text-brand-begeSuave">Nome do Produto *</Label>
+        <CardContent className='text-brand-brown-800'>
+          <form onSubmit={handleSubmit} className="space-y-6 ">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
+              <div className="space-y-2 ">
+                <Label htmlFor="produto" className="text-brand-brown-800">Nome do Produto *</Label>
                 <Select
 
                   value={formData.produto}
@@ -191,7 +191,7 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
                     setFormData(prev => ({ ...prev, produto: value, numeroLote: '' }));
                   }}
                 >
-                  <SelectTrigger className="text-brand-trufa font-medium" >
+                  <SelectTrigger className="text-brand-brown-800 font-medium" >
                     <SelectValue placeholder="Selecione o produto" />
                   </SelectTrigger>
                   <SelectContent className="bg-brand-mel border-0 focus:ring-0 focus:outline-none">
@@ -203,23 +203,23 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="numeroLote" className="text-brand-begeSuave">Número do Lote *</Label>
+                <Label htmlFor="numeroLote" className="text-brand-brown-800">Número do Lote *</Label>
                 <Select
                   value={formData.numeroLote}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, numeroLote: value }))}
                   disabled={!formData.produto}
                 >
-                  <SelectTrigger className="text-brand-trufa font-medium ">
+                  <SelectTrigger className="text-brand-brown-800 font-medium ">
                     <SelectValue placeholder={formData.produto ? "Selecione o lote" : "Primeiro selecione o produto"} />
                   </SelectTrigger>
-                  {/* <SelectContent className="bg-brand-mel border-0 focus:ring-0 focus:outline-none">
+                  <SelectContent className="bg-brand-brown-800 border-0 focus:ring-0 focus:outline-none">
                     {lotesDosProdutos.map(lote => (
                       <SelectItem key={lote.id} value={lote.id}>
                         {lote.codigo_lote} - {lote.produtos?.nome}
                       </SelectItem>
                     ))}
-                  </SelectContent> */}
-                  <SelectContent className="bg-brand-mel border-0 focus:ring-0 focus:outline-none">
+                  </SelectContent>
+                  <SelectContent className="bg-brand-brown-800 border-0 focus:ring-0 focus:outline-none">
                     <SelectItem value="f47ac10b-58cc-4372-a567-0e02b2c3d479">
                       LOTE-TESTE-001 (simulado)
                     </SelectItem>
@@ -229,7 +229,7 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
               </div>
 
               <div className="space-y-2">
-                <Label className="text-brand-begeSuave">Distribuidor</Label>
+                <Label className="text-brand-brown-800">Distribuidor</Label>
                 <Input
                   value="Distribuidor Teste"
                   disabled
@@ -238,32 +238,32 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="quantidade" className="text-brand-begeSuave">Quantidade a Distribuir *</Label>
+                <Label htmlFor="quantidade" className="text-brand-brown-800">Quantidade a Distribuir *</Label>
                 <Input
                   id="quantidade"
                   type="number"
                   value={formData.quantidade}
                   onChange={(e) => setFormData(prev => ({ ...prev, quantidade: e.target.value }))}
                   placeholder="Ex: 100"
-                  className=" text-brand-trufa font-medium border-0 focus:ring-0 focus:outline-none"
+                  className=" text-brand-brown-800 font-medium border-0 focus:ring-0 focus:outline-none"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="pdvs" className="text-brand-begeSuave">Pontos de Venda (PDVs) *</Label>
+                <Label htmlFor="pdvs" className="text-brand-brown-800">Pontos de Venda (PDVs) *</Label>
                 <Input
                   id="pdvs"
                   value={formData.pdvs}
                   onChange={(e) => setFormData(prev => ({ ...prev, pdvs: e.target.value }))}
                   placeholder="Ex: Padaria da Esquina, Supermercado XYZ"
-                  className="text-brand-trufa font-medium border-0 focus:ring-0 focus:outline-none"
+                  className="text-brand-brown-800font-medium border-0 focus:ring-0 focus:outline-none"
                 />
-                <p className="text-xs text-brand-begeSuave">Separe múltiplos PDVs por vírgula</p>
+                <p className="text-xs text-brand-brown-800">Separe múltiplos PDVs por vírgula</p>
               </div>
             </div>
 
             <div className="space-y-3">
-              <Label className="text-brand-begeSuave">Regiões de Entrega *</Label>
+              <Label className="text-brand-brown-800">Regiões de Entrega *</Label>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 p-4 border border-brand-marrom rounded-lg bg-brand-chocolate">
                 {regioesDisponiveis.map(regiao => (
                   <div key={regiao} className="flex items-center space-x-2">
@@ -307,20 +307,20 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
         </CardContent>
       </Card>
 
-      <Card className="bg-brand-doceLeite border-brand-marrom">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-brand-begeSuave">
+      <Card className="bg-brand-brown-100 border-brand-marrom">
+        <CardHeader className='bg-brand-brown-100'>
+          <CardTitle className="flex items-center gap-2 text-brand-brown-800">
             📋 Distribuições Cadastradas
           </CardTitle>
-          <CardDescription className="text-brand-begeSuave">
+          <CardDescription className="text-brand-brown-800">
             Lista de todas as distribuições registradas
           </CardDescription>
         </CardHeader>
         <CardContent>
           {distribuicoes.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-brand-begeSuave">Nenhuma distribuição cadastrada ainda.</p>
-              <p className="text-sm text-brand-begeSuave">Cadastre sua primeira distribuição usando o formulário acima.</p>
+              <p className="text-brand-brown-800">Nenhuma distribuição cadastrada ainda.</p>
+              <p className="text-sm text-brand-brown-800">Cadastre sua primeira distribuição usando o formulário acima.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
