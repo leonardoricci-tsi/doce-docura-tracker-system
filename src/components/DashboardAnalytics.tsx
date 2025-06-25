@@ -4,11 +4,10 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 // Mock data for charts
 const saboresData = [
-  { sabor: 'Chocolate', quantidade: 150 },
-  { sabor: 'Morango', quantidade: 120 },
-  { sabor: 'Vanilla', quantidade: 100 },
-  { sabor: 'Coco', quantidade: 80 },
-  { sabor: 'Maracujá', quantidade: 60 }
+  { sabor: 'Trufado', quantidade: 150 },
+  { sabor: 'Alfajor', quantidade: 120 },
+  { sabor: 'Doce de Leite', quantidade: 100 },
+  { sabor: 'Nozes', quantidade: 80 },
 ];
 
 const regioesData = [
@@ -22,15 +21,15 @@ const regioesData = [
 const produtosProximosVencimento = [
   {
     numeroLote: 'LOT003',
-    produto: 'Quindim',
-    dataValidade: '2024-06-12',
+    produto: 'Trufado',
+    dataValidade: '2025-06-29',
     distribuidor: 'Distribuidora Minas Gerais',
     diasRestantes: 2
   },
   {
     numeroLote: 'LOT001',
-    produto: 'Brigadeiro',
-    dataValidade: '2024-06-20',
+    produto: 'Alfajor',
+    dataValidade: '2025-06-28',
     distribuidor: 'Distribuidora São Paulo',
     diasRestantes: 10
   }

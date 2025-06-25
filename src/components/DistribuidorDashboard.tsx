@@ -18,10 +18,12 @@ export const DistribuidorDashboard = ({ currentUser, onLogout }: DistribuidorDas
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-brand-yellow-400 rounded-full flex items-center justify-center">
-                <span className="text-brand-brown-800 text-2xl">🍰</span>
+                <span className="text-brand-brown-800 text-2xl">
+                  <img src="/logo_system.png" alt="Logo" className="w-20 h-20 object-contain" />
+                </span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Doce Doçura</h1>
+                <h1 className="text-2xl font-bold text-white">MaplyRastro</h1>
                 <p className="text-brand-yellow-100">Painel do Distribuidor</p>
               </div>
             </div>

@@ -31,10 +31,12 @@ export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
           <div className="inline-flex items-center justify-center mb-4">
             <img src="https://docedocura.com/wp-content/uploads/2024/08/Logo-Home-Doce-Docura.svg" alt="" className="w-40 h-20" />
           </div>
-          <p className="text-sweet-gold-600 text-lg">Sistema de Gerenciamento</p>
+          <p style={{ color: '#5c3a21' }} className="text-lg">
+            Rastreio sem complicação. Com eficiência, com organização!
+          </p>
         </div>
 
-        <Card className="brand-card animate-fade-in bg-brand-yellow-400">
+        <Card className="brand-card animate-fade-in bg-brand-yellow-500">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl text-brand-brown-800">
               {isSigningUp ? 'Criar Conta' : 'Bem-vindo'}

@@ -67,10 +67,10 @@ export const Rastreabilidade = () => {
   return (
     <div className="space-y-6">
       {/* Busca */}
-      <Card className="bg-brand-doceLeite border-brand-marrom">
+      <Card className="bg-brand-brown-100 border-brand-marrom">
         <CardHeader>
-          <CardTitle className="text-brand-begeSuave">Rastreabilidade de Produtos</CardTitle>
-          <CardDescription className="text-brand-begeSuave">
+          <CardTitle className="text-brand-brown-800">Rastreabilidade de Produtos</CardTitle>
+          <CardDescription className="text-brand-brown-800">
             Busque por nome do produto ou número do lote para rastrear
           </CardDescription>
         </CardHeader>
@@ -94,10 +94,10 @@ export const Rastreabilidade = () => {
       </Card>
 
       {/* Resultados */}
-      <Card className="bg-brand-doceLeite border-brand-marrom">
+      <Card className="bg-brand-brown-100 border-brand-marrom">
         <CardHeader>
-          <CardTitle className="text-brand-begeSuave">Histórico de Rastreabilidade</CardTitle>
-          <CardDescription className="text-brand-begeSuave">
+          <CardTitle className="text-brand-brown-800">Histórico de Rastreabilidade</CardTitle>
+          <CardDescription className="text-brand-brown-800">
             Visualize todo o histórico de movimentação dos produtos
           </CardDescription>
         </CardHeader>
@@ -129,7 +129,7 @@ export const Rastreabilidade = () => {
                           {status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-brand-trufa">{getLocalizacaoAtual(lote)}</TableCell>
+                      <TableCell className="text-brand-brown-100">{getLocalizacaoAtual(lote)}</TableCell>
                       <TableCell>
                         <Button 
                           variant="outline" 
