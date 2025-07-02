@@ -44,7 +44,7 @@ export const useAuth = () => {
 
       console.log('Login realizado com sucesso:', data.user?.id);
 
-      // Verificar se o perfil existe, se não, criar
+      // Verificar se o perfil existe, se não, criar apenas se necessário
       if (data.user) {
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
@@ -56,9 +56,9 @@ export const useAuth = () => {
           console.error('Erro ao buscar perfil:', profileError);
         }
 
+        // Só criar perfil se realmente não existir (não deve acontecer após o cadastro corrigido)
         if (!profile) {
-          console.log('Perfil não encontrado, criando novo perfil');
-          // Perfil não existe, criar um novo
+          console.log('Perfil não encontrado após login, criando perfil básico');
           const { error: insertError } = await supabase
             .from('profiles')
             .insert({
@@ -74,11 +74,7 @@ export const useAuth = () => {
               description: "Login realizado, mas houve um problema ao criar o perfil.",
               variant: "default"
             });
-          } else {
-            console.log('Perfil criado com sucesso');
           }
-        } else {
-          console.log('Perfil existente encontrado:', profile.tipo_usuario);
         }
       }
 
@@ -133,16 +129,17 @@ export const useAuth = () => {
         return;
       }
 
-      console.log('Código de convite válido, criando usuário');
+      console.log('Código de convite válido, tipo de usuário:', invitation.tipo_usuario);
 
-      // Criar o usuário
+      // Criar o usuário com metadados incluindo o tipo de usuário
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
-            tipo_usuario: invitation.tipo_usuario
+            tipo_usuario: invitation.tipo_usuario,
+            email: email
           }
         }
       });
@@ -159,31 +156,44 @@ export const useAuth = () => {
 
       console.log('Usuário criado:', data.user?.id);
 
-      // Criar perfil do usuário
+      // IMPORTANTE: Criar perfil com o tipo de usuário correto do convite
       if (data.user) {
+        console.log('Criando perfil com tipo:', invitation.tipo_usuario);
         const { error: profileError } = await supabase
           .from('profiles')
           .insert({
             id: data.user.id,
             email: email,
-            tipo_usuario: invitation.tipo_usuario
+            tipo_usuario: invitation.tipo_usuario // Usar o tipo do convite
           });
 
         if (profileError) {
           console.error('Erro ao criar perfil:', profileError);
+          toast({
+            title: "Erro no cadastro",
+            description: "Erro ao criar perfil do usuário.",
+            variant: "destructive"
+          });
+          return;
         } else {
-          console.log('Perfil criado com sucesso');
+          console.log('Perfil criado com sucesso com tipo:', invitation.tipo_usuario);
         }
       }
 
       // Marcar o convite como consumido
-      await supabase
+      const { error: updateError } = await supabase
         .from('sign_up_invitations')
         .update({ 
           consumed: true, 
           consumed_at: new Date().toISOString() 
         })
         .eq('id', invitation.id);
+
+      if (updateError) {
+        console.error('Erro ao marcar convite como consumido:', updateError);
+      } else {
+        console.log('Convite marcado como consumido');
+      }
 
       toast({
         title: "Cadastro realizado!",

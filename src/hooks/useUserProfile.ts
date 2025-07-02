@@ -21,12 +21,12 @@ export const useUserProfile = () => {
 
         console.log('Usuário autenticado:', user.id, user.email);
 
-        // Tentar buscar o perfil existente
+        // Buscar o perfil existente
         const { data: profile, error } = await supabase
           .from('profiles')
           .select('tipo_usuario, email, nome')
           .eq('id', user.id)
-          .maybeSingle(); // Usando maybeSingle() em vez de single() para evitar erro quando não há dados
+          .maybeSingle();
 
         if (error) {
           console.error('Erro ao buscar perfil:', error);
@@ -39,29 +39,17 @@ export const useUserProfile = () => {
           console.log('Perfil encontrado:', profile);
           setUserProfile(profile);
         } else {
-          // Se não encontrou perfil, criar um padrão
-          console.log('Perfil não encontrado, criando perfil padrão');
-          const { data: newProfile, error: insertError } = await supabase
-            .from('profiles')
-            .insert({
-              id: user.id,
-              email: user.email || '',
-              tipo_usuario: 'distribuidor'
-            })
-            .select('tipo_usuario, email, nome')
-            .maybeSingle();
-
-          if (insertError) {
-            console.error('Erro ao criar perfil:', insertError);
-            toast({
-              title: "Erro",
-              description: "Não foi possível criar o perfil do usuário.",
-              variant: "destructive"
-            });
-          } else if (newProfile) {
-            console.log('Novo perfil criado:', newProfile);
-            setUserProfile(newProfile);
-          }
+          // Se não encontrou perfil, algo deu errado no cadastro
+          // Não devemos criar perfil automaticamente aqui, pois pode sobrescrever dados importantes
+          console.error('Perfil não encontrado para usuário autenticado:', user.id);
+          toast({
+            title: "Erro",
+            description: "Perfil do usuário não encontrado. Entre em contato com o suporte.",
+            variant: "destructive"
+          });
+          
+          // Fazer logout do usuário já que não tem perfil válido
+          await supabase.auth.signOut();
         }
       } catch (error) {
         console.error('Erro inesperado ao buscar perfil:', error);
