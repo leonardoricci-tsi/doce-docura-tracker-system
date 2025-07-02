@@ -25,7 +25,7 @@ export const useAuth = () => {
 
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -37,6 +37,30 @@ export const useAuth = () => {
           variant: "destructive"
         });
         return;
+      }
+
+      // Verificar se o perfil existe, se não, criar
+      if (data.user) {
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('tipo_usuario')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profileError && profileError.code === 'PGRST116') {
+          // Perfil não existe, criar um novo
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              email: data.user.email || email,
+              tipo_usuario: role || 'distribuidor'
+            });
+
+          if (insertError) {
+            console.error('Erro ao criar perfil:', insertError);
+          }
+        }
       }
 
       onSuccess(role, email);
@@ -87,7 +111,7 @@ export const useAuth = () => {
       }
 
       // Criar o usuário
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -105,6 +129,21 @@ export const useAuth = () => {
           variant: "destructive"
         });
         return;
+      }
+
+      // Criar perfil do usuário
+      if (data.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            email: email,
+            tipo_usuario: invitation.tipo_usuario
+          });
+
+        if (profileError) {
+          console.error('Erro ao criar perfil:', profileError);
+        }
       }
 
       // Marcar o convite como consumido
@@ -127,7 +166,7 @@ export const useAuth = () => {
       toast({
         title: "Erro no cadastro",
         description: "Ocorreu um erro inesperado. Tente novamente.",
-        variant: "destructive"
+        variant: "descriptive"
       });
     } finally {
       setIsLoading(false);
