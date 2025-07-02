@@ -166,7 +166,7 @@ export const useAuth = () => {
       toast({
         title: "Erro no cadastro",
         description: "Ocorreu um erro inesperado. Tente novamente.",
-        variant: "descriptive"
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
