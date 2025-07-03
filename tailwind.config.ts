@@ -125,6 +125,9 @@ export default {
 					mel: '#D4A373',
 					cafe: '#5C3A21',
 					marrom: '#8B5E3C',
+					AmareloOuro: '#FFE066',
+					amareloPastel: '#FFEB3B',
+
 				},
 
 

@@ -32,16 +32,16 @@ export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
             <img src="https://docedocura.com/wp-content/uploads/2024/08/Logo-Home-Doce-Docura.svg" alt="" className="w-40 h-20" />
           </div>
           <p style={{ color: '#5c3a21' }} className="text-lg">
-            Rastreio sem complicação. Com eficiência, com organização!
+            Rastreio sem complicação <br />Com eficiência e organização!
           </p>
         </div>
 
-        <Card className="brand-card animate-fade-in bg-brand-yellow-500">
+        <Card className="brand-card animate-fade-in bg-brand-yellow-600">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl text-brand-brown-800">
+            <CardTitle className="text-2xl text-brand-brown-800 font-bold">
               {isSigningUp ? 'Criar Conta' : 'Bem-vindo'}
             </CardTitle>
-            <CardDescription className="text-brand-brown-900">
+            <CardDescription className="text-brand-brown-900 font-semibold">
               {isSigningUp ? 'Cadastre-se com um código de convite' : 'Selecione seu tipo de acesso'}
             </CardDescription>
           </CardHeader>

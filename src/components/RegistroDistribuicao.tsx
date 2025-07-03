@@ -220,7 +220,7 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
                     ))}
                   </SelectContent>
                   <SelectContent className="bg-brand-brown-800 border-0 focus:ring-0 focus:outline-none">
-                    <SelectItem value="f47ac10b-58cc-4372-a567-0e02b2c3d479">
+                    <SelectItem value="f47ac10b-58cc-4372-a567-0e02b2c3d479" className="cursor-pointer">
                       LOTE-TESTE-001 (simulado)
                     </SelectItem>
                   </SelectContent>
@@ -233,7 +233,7 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
                 <Input
                   value="Distribuidor Teste"
                   disabled
-                  className="bg-brand-cremeEscuro cursor-not-allowed text-brand-begeSuave"
+                  className="bg-brand-chocolate cursor-not-allowed text-brand-begeSuave"
                 />
               </div>
 
@@ -249,7 +249,7 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 md:col-span-2">
                 <Label htmlFor="pdvs" className="text-brand-brown-800">Pontos de Venda (PDVs) *</Label>
                 <Input
                   id="pdvs"
@@ -281,7 +281,7 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
               {formData.regioes.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
                   {formData.regioes.map(regiao => (
-                    <Badge key={regiao} variant="secondary" className="bg-brand-rosaClaro text-brand-begeSuave">
+                    <Badge key={regiao} variant="secondary" className="bg-brand-rosaClaro text-brand-chocolate cursor-pointer text-sm">
                       {regiao}
                     </Badge>
                   ))}
