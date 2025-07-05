@@ -131,7 +131,7 @@ export const useAuth = () => {
 
       console.log('Código de convite válido, tipo de usuário:', invitation.tipo_usuario);
 
-      // Criar o usuário com metadados incluindo o tipo de usuário
+      // Criar o usuário
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -156,7 +156,7 @@ export const useAuth = () => {
 
       console.log('Usuário criado:', data.user?.id);
 
-      // IMPORTANTE: Criar perfil com o tipo de usuário correto do convite
+      // Criar perfil com o tipo de usuário correto do convite
       if (data.user) {
         console.log('Criando perfil com tipo:', invitation.tipo_usuario);
         const { error: profileError } = await supabase
@@ -164,7 +164,7 @@ export const useAuth = () => {
           .insert({
             id: data.user.id,
             email: email,
-            tipo_usuario: invitation.tipo_usuario // Usar o tipo do convite
+            tipo_usuario: invitation.tipo_usuario
           });
 
         if (profileError) {
