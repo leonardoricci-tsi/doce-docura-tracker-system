@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,35 +30,12 @@ const regioesDisponiveis = [
 interface RegistroDistribuicaoProps {
   distribuidorName: string;
 }
-function gerarNumeroLote() { //teste
-  return "LOTE-TESTE-001";
-}
-const distribuidoresFixos = [
-  {
-    id: "550e8400-e29b-41d4-a716-446655440000", // UUID válido
-    nome: "Distribuidor Teste",
-    responsavel: "João da Silva"
-  }
-];
-
-const lotesFixos = [
-  {
-    id: "f47ac10b-58cc-4372-a567-0e02b2c3d479", // UUID válido
-    produto_id: "produto-uuid-1234", // Pode ser qualquer string aqui para teste
-    codigo_lote: "LOTE-TESTE-001",
-    produtos: {
-      nome: "Produto Teste"
-    }
-  }
-];
 
 export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoProps) => {
   const { data: produtos = [] } = useProducts();
-  // const { data: lotes = [] } = useLotesProducao();
-  const lotes = lotesFixos;
+  const { data: lotes = [] } = useLotesProducao();
   const { data: distribuicoes = [] } = useDistribuicoes();
-  // const { data: distribuidores = [] } = useDistribuidores();
-  const distribuidores = distribuidoresFixos;
+  const { data: distribuidores = [] } = useDistribuidores();
   const createDistribuicaoMutation = useCreateDistribuicao();
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -106,14 +84,21 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
       return;
     }
 
-    // const distribuidorAtual = distribuidores.find(d => d.nome === distribuidorName);
-    const distribuidorAtual = distribuidores.find(d => d.nome === distribuidorName) || distribuidores[0];
+    // Primeiro verifica se existe um distribuidor no banco de dados
+    let distribuidorAtual = distribuidores.find(d => d.nome === distribuidorName);
+    
+    // Se não encontrar, cria um distribuidor padrão
+    if (!distribuidorAtual && distribuidores.length > 0) {
+      distribuidorAtual = distribuidores[0];
+    }
 
+    console.log('Distribuidor encontrado:', distribuidorAtual);
+    console.log('Todos os distribuidores:', distribuidores);
 
     if (!distribuidorAtual) {
       toast({
         title: "Erro",
-        description: "Distribuidor não encontrado",
+        description: "Nenhum distribuidor encontrado. Verifique se há distribuidores cadastrados no sistema.",
         variant: "destructive"
       });
       return;
@@ -128,6 +113,8 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
         responsavel_distribuicao: distribuidorAtual.responsavel || 'Sistema',
         observacoes: `Regiões: ${formData.regioes.join(', ')}. PDVs: ${formData.pdvs}`
       };
+
+      console.log('Dados da nova distribuição:', novaDistribuicao);
 
       await createDistribuicaoMutation.mutateAsync(novaDistribuicao);
 
@@ -151,7 +138,6 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
         variant: "destructive"
       });
     }
-
   };
 
   const handleRegiaoChange = (regiao: string, checked: boolean) => {
@@ -165,8 +151,6 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
   const lotesDosProdutos = lotes.filter(lote =>
     !formData.produto || lote.produto_id === formData.produto
   );
-
-
 
   return (
     <div className="space-y-8">
@@ -185,7 +169,6 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
               <div className="space-y-2 ">
                 <Label htmlFor="produto" className="text-brand-brown-800">Nome do Produto *</Label>
                 <Select
-
                   value={formData.produto}
                   onValueChange={(value) => {
                     setFormData(prev => ({ ...prev, produto: value, numeroLote: '' }));
@@ -219,19 +202,13 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
                       </SelectItem>
                     ))}
                   </SelectContent>
-                  <SelectContent className="bg-brand-brown-800 border-0 focus:ring-0 focus:outline-none">
-                    <SelectItem value="f47ac10b-58cc-4372-a567-0e02b2c3d479" className="cursor-pointer">
-                      LOTE-TESTE-001 (simulado)
-                    </SelectItem>
-                  </SelectContent>
-
                 </Select>
               </div>
 
               <div className="space-y-2">
                 <Label className="text-brand-brown-800">Distribuidor</Label>
                 <Input
-                  value="Distribuidor Teste"
+                  value={distribuidorAtual?.nome || "Carregando..."}
                   disabled
                   className="bg-brand-chocolate cursor-not-allowed text-brand-begeSuave"
                 />
