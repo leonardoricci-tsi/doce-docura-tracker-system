@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,6 +48,10 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
     quantidade: ''
   });
 
+  // Encontrar o distribuidor atual com base no nome fornecido
+  const distribuidorAtual = distribuidores.find(d => d.nome === distribuidorName) || 
+                           (distribuidores.length > 0 ? distribuidores[0] : null);
+
   const resetForm = () => {
     setFormData({
       produto: '',
@@ -84,17 +87,6 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
       return;
     }
 
-    // Primeiro verifica se existe um distribuidor no banco de dados
-    let distribuidorAtual = distribuidores.find(d => d.nome === distribuidorName);
-    
-    // Se não encontrar, cria um distribuidor padrão
-    if (!distribuidorAtual && distribuidores.length > 0) {
-      distribuidorAtual = distribuidores[0];
-    }
-
-    console.log('Distribuidor encontrado:', distribuidorAtual);
-    console.log('Todos os distribuidores:', distribuidores);
-
     if (!distribuidorAtual) {
       toast({
         title: "Erro",
@@ -103,6 +95,9 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
       });
       return;
     }
+
+    console.log('Distribuidor encontrado:', distribuidorAtual);
+    console.log('Todos os distribuidores:', distribuidores);
 
     try {
       const novaDistribuicao = {
