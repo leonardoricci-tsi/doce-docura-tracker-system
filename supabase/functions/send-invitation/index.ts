@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
@@ -13,8 +14,12 @@ interface InvitationRequest {
 }
 
 const handler = async (req: Request): Promise<Response> => {
+  console.log("=== Send Invitation Function Started ===");
+  console.log("Method:", req.method);
+  
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
+    console.log("CORS preflight request handled");
     return new Response(null, { headers: corsHeaders });
   }
 
@@ -22,6 +27,11 @@ const handler = async (req: Request): Promise<Response> => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
+
+    console.log("Environment variables check:");
+    console.log("SUPABASE_URL:", supabaseUrl ? "✓ Present" : "✗ Missing");
+    console.log("SUPABASE_SERVICE_ROLE_KEY:", supabaseServiceRoleKey ? "✓ Present" : "✗ Missing");
+    console.log("RESEND_API_KEY:", resendApiKey ? "✓ Present" : "✗ Missing");
 
     if (!supabaseUrl || !supabaseServiceRoleKey) {
       throw new Error("Missing Supabase configuration");
@@ -35,11 +45,17 @@ const handler = async (req: Request): Promise<Response> => {
     const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
     const resend = new Resend(resendApiKey);
 
-    const { email, tipo_usuario }: InvitationRequest = await req.json();
+    console.log("Supabase and Resend clients initialized");
+
+    const requestBody = await req.json();
+    console.log("Request body received:", requestBody);
+
+    const { email, tipo_usuario }: InvitationRequest = requestBody;
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      console.log("Invalid email format:", email);
       return new Response(
         JSON.stringify({ error: "Formato de e-mail inválido" }),
         {
@@ -51,17 +67,26 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Generate 6-digit random code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log("Generated code:", code);
 
     // Check if invitation already exists
-    const { data: existingInvitation } = await supabase
+    console.log("Checking for existing invitation for email:", email);
+    const { data: existingInvitation, error: selectError } = await supabase
       .from("sign_up_invitations")
       .select("id")
       .eq("email", email)
       .single();
 
+    if (selectError && selectError.code !== 'PGRST116') {
+      console.error("Error checking existing invitation:", selectError);
+    }
+
+    console.log("Existing invitation:", existingInvitation ? "Found" : "Not found");
+
     let result;
     
     if (existingInvitation) {
+      console.log("Updating existing invitation");
       // Update existing invitation
       result = await supabase
         .from("sign_up_invitations")
@@ -74,6 +99,7 @@ const handler = async (req: Request): Promise<Response> => {
         })
         .eq("email", email);
     } else {
+      console.log("Creating new invitation");
       // Create new invitation
       result = await supabase
         .from("sign_up_invitations")
@@ -84,10 +110,18 @@ const handler = async (req: Request): Promise<Response> => {
         });
     }
 
+    console.log("Database operation result:", result);
+
     if (result.error) {
       console.error("Database error:", result.error);
       throw new Error("Erro ao salvar convite no banco de dados");
     }
+
+    console.log("=== Attempting to send email ===");
+    console.log("Email details:");
+    console.log("- To:", email);
+    console.log("- Code:", code);
+    console.log("- User type:", tipo_usuario);
 
     // Send email with invitation code
     const emailResponse = await resend.emails.send({
@@ -109,18 +143,24 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
+    console.log("=== Email sending result ===");
+    console.log("Success:", emailResponse.data ? "✓" : "✗");
+    console.log("Email ID:", emailResponse.data?.id);
+    console.log("Error:", emailResponse.error);
+
     if (emailResponse.error) {
-      console.error("Email error:", emailResponse.error);
-      throw new Error("Erro ao enviar e-mail de convite");
+      console.error("Email error details:", emailResponse.error);
+      throw new Error(`Erro ao enviar e-mail: ${emailResponse.error.message}`);
     }
 
-    console.log("Invitation sent successfully:", { email, code });
+    console.log("=== Function completed successfully ===");
 
     return new Response(
       JSON.stringify({ 
         success: true, 
         message: "Convite enviado com sucesso!",
-        email 
+        email,
+        emailId: emailResponse.data?.id
       }),
       {
         status: 200,
@@ -129,7 +169,12 @@ const handler = async (req: Request): Promise<Response> => {
     );
 
   } catch (error: any) {
-    console.error("Error in send-invitation function:", error);
+    console.error("=== Error in send-invitation function ===");
+    console.error("Error type:", typeof error);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+    console.error("Full error object:", error);
+    
     return new Response(
       JSON.stringify({ 
         error: error.message || "Erro interno do servidor" 
