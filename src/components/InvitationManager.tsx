@@ -75,6 +75,8 @@ export const InvitationManager = () => {
 
     setIsLoading(true);
     try {
+      console.log('Chamando edge function com:', { email, tipo_usuario: tipoUsuario });
+      
       // Call edge function to create invitation and send email
       const { data, error } = await supabase.functions.invoke('send-invitation', {
         body: {
@@ -82,6 +84,8 @@ export const InvitationManager = () => {
           tipo_usuario: tipoUsuario,
         }
       });
+
+      console.log('Resposta da edge function:', { data, error });
 
       if (error) {
         console.error('Erro ao criar convite:', error);
