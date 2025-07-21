@@ -62,36 +62,56 @@ export const InvitationManager = () => {
       return;
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "E-mail inválido",
+        description: "Por favor, insira um e-mail válido.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const code = generateInvitationCode();
-      
-      const { error } = await supabase
-        .from('sign_up_invitations')
-        .insert({
+      // Call edge function to create invitation and send email
+      const { data, error } = await supabase.functions.invoke('send-invitation', {
+        body: {
           email,
-          code,
-          tipo_usuario: tipoUsuario
-        });
+          tipo_usuario: tipoUsuario,
+        }
+      });
 
       if (error) {
+        console.error('Erro ao criar convite:', error);
         toast({
           title: "Erro ao criar convite",
-          description: error.message,
-          variant: "destructive"
+          description: error.message || "Erro ao criar convite. Tente novamente.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data?.error) {
+        toast({
+          title: "Erro",
+          description: data.error,
+          variant: "destructive",
         });
         return;
       }
 
       toast({
-        title: "Convite criado!",
-        description: `Convite para ${email} (${tipoUsuario}) criado com código: ${code}`,
+        title: "Convite enviado!",
+        description: `Convite enviado com sucesso para ${email}! Verifique a caixa de entrada.`,
       });
 
       setEmail('');
       setTipoUsuario('');
       await fetchInvitations();
     } catch (error) {
+      console.error('Erro ao criar convite:', error);
       toast({
         title: "Erro ao criar convite",
         description: "Ocorreu um erro inesperado. Tente novamente.",
