@@ -16,7 +16,7 @@ interface InvitationRequest {
 const handler = async (req: Request): Promise<Response> => {
   console.log("=== Send Invitation Function Started ===");
   console.log("Method:", req.method);
-  
+
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     console.log("CORS preflight request handled");
@@ -84,7 +84,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Existing invitation:", existingInvitation ? "Found" : "Not found");
 
     let result;
-    
+
     if (existingInvitation) {
       console.log("Updating existing invitation");
       // Update existing invitation
@@ -129,15 +129,25 @@ const handler = async (req: Request): Promise<Response> => {
       to: [email],
       subject: "Seu código de convite",
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #333;">Convite para Cadastro</h2>
-          <p>Olá!</p>
-          <p>Aqui está seu código de convite: <strong style="font-size: 24px; color: #007bff;">${code}</strong></p>
-          <p>Use-o para continuar seu cadastro.</p>
-          <p>Este código é válido e pode ser usado para criar sua conta no sistema.</p>
-          <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
-          <p style="color: #666; font-size: 12px;">
-            Se você não solicitou este convite, pode ignorar este e-mail.
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background-color: #f9f9f9; border-radius: 10px; border: 1px solid #e0e0e0;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h1 style="color: #333; margin: 0;">🎉 Convite para Cadastro</h1>
+          </div>
+          <p style="font-size: 16px; color: #444;">Olá!</p>
+          <p style="font-size: 16px; color: #444;">Você recebeu um código de convite para criar sua conta no sistema.</p>
+          
+          <div style="background-color: #ffffff; border: 1px dashed #007bff; padding: 20px; margin: 20px 0; text-align: center; border-radius: 8px;">
+            <p style="font-size: 18px; color: #333; margin: 0;">Seu código de convite é:</p>
+            <p style="font-size: 32px; font-weight: bold; color: #007bff; margin: 10px 0;">${code}</p>
+          </div>
+
+          <p style="font-size: 16px; color: #444;">Use esse código para continuar seu cadastro no nosso sistema. Ele é válido por tempo limitado.</p>
+          <p style="font-size: 16px; color: #444;">Se você não solicitou este convite, pode ignorar este e-mail com segurança.</p>
+
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+
+          <p style="font-size: 12px; color: #999; text-align: center;">
+            © ${new Date().getFullYear()} - MaplyRastro. Todos os direitos reservados.
           </p>
         </div>
       `,
@@ -156,8 +166,8 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("=== Function completed successfully ===");
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         message: "Convite enviado com sucesso!",
         email,
         emailId: emailResponse.data?.id
@@ -174,10 +184,10 @@ const handler = async (req: Request): Promise<Response> => {
     console.error("Error message:", error.message);
     console.error("Error stack:", error.stack);
     console.error("Full error object:", error);
-    
+
     return new Response(
-      JSON.stringify({ 
-        error: error.message || "Erro interno do servidor" 
+      JSON.stringify({
+        error: error.message || "Erro interno do servidor"
       }),
       {
         status: 500,
