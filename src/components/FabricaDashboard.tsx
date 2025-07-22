@@ -6,6 +6,7 @@ import { GerenciamentoProducao } from '@/components/GerenciamentoProducao';
 import { Rastreabilidade } from '@/components/Rastreabilidade';
 import { DashboardAnalytics } from '@/components/DashboardAnalytics';
 import { RoleBasedAccess } from '@/components/RoleBasedAccess';
+import { InvitationManager } from '@/components/InvitationManager';
 
 interface FabricaDashboardProps {
   currentUser: string;
@@ -47,7 +48,7 @@ export const FabricaDashboard = ({ currentUser, onLogout }: FabricaDashboardProp
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-brand-yellow-500 min-h-screen">
           <Tabs defaultValue="producao" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-8 bg-brand-yellow-300 border border-brand-neutral-300">
+            <TabsList className="grid w-full grid-cols-4 mb-8 bg-brand-yellow-300 border border-brand-neutral-300">
               <TabsTrigger value="producao" className="flex items-center gap-2 data-[state=active]:bg-brand-yellow-400 data-[state=active]:text-brand-brown-800">
                 🏭 Produção
               </TabsTrigger>
@@ -56,6 +57,9 @@ export const FabricaDashboard = ({ currentUser, onLogout }: FabricaDashboardProp
               </TabsTrigger>
               <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=active]:bg-brand-yellow-400 data-[state=active]:text-brand-brown-800">
                 📊 Analytics
+              </TabsTrigger>
+              <TabsTrigger value="convites" className="flex items-center gap-2 data-[state=active]:bg-brand-yellow-400 data-[state=active]:text-brand-brown-800">
+                ✉️ Convites
               </TabsTrigger>
             </TabsList>
 
@@ -74,6 +78,12 @@ export const FabricaDashboard = ({ currentUser, onLogout }: FabricaDashboardProp
             <TabsContent value="analytics">
               <RoleBasedAccess allowedRoles={['fabrica']}>
                 <DashboardAnalytics />
+              </RoleBasedAccess>
+            </TabsContent>
+
+            <TabsContent value="convites">
+              <RoleBasedAccess allowedRoles={['fabrica']}>
+                <InvitationManager />
               </RoleBasedAccess>
             </TabsContent>
           </Tabs>
