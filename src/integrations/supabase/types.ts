@@ -263,7 +263,7 @@ export type Database = {
           tipo_usuario: string
         }
         Insert: {
-          code: string
+          code?: string
           consumed?: boolean
           consumed_at?: string | null
           created_at?: string | null

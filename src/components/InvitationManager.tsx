@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -126,6 +127,39 @@ export const InvitationManager = () => {
     }
   };
 
+  const handleDeleteInvitation = async (invitationId: string, email: string) => {
+    try {
+      const { error } = await supabase
+        .from('sign_up_invitations')
+        .delete()
+        .eq('id', invitationId);
+
+      if (error) {
+        console.error('Erro ao deletar convite:', error);
+        toast({
+          title: "Erro ao excluir convite",
+          description: "Não foi possível excluir o convite. Tente novamente.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Convite excluído!",
+        description: `O convite para ${email} foi removido com sucesso.`,
+      });
+
+      await fetchInvitations();
+    } catch (error) {
+      console.error('Erro ao deletar convite:', error);
+      toast({
+        title: "Erro ao excluir convite",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-brand-yellow-400 p-6">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -205,7 +239,7 @@ export const InvitationManager = () => {
                         </p>
                       )}
                     </div>
-                    <div className="text-right">
+                    <div className="flex items-center gap-2">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           invitation.consumed
@@ -215,6 +249,17 @@ export const InvitationManager = () => {
                       >
                         {invitation.consumed ? 'Usado' : 'Pendente'}
                       </span>
+                      {!invitation.consumed && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteInvitation(invitation.id, invitation.email)}
+                          className="text-red-600 hover:text-red-800 hover:bg-red-50 p-1"
+                          title="Excluir convite"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                 ))
