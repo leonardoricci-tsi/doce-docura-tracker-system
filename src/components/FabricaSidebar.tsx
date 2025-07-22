@@ -32,7 +32,7 @@ export function FabricaSidebar({ onNavigate, currentView }: FabricaSidebarProps)
 
   return (
     <Sidebar
-      collapsible="none"
+      collapsible= none
       className="bg-brand-brown-800"
     >
       <SidebarContent ClassName = "bg-brand-brown-800">
