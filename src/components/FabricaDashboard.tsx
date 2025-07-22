@@ -41,7 +41,6 @@ export const FabricaDashboard = ({ currentUser, onLogout }: FabricaDashboardProp
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center py-6">
                   <div className="flex items-center gap-4">
-                    <SidebarTrigger className="text-white hover:bg-brand-brown-700" />
                     <div className="w-12 h-12 bg-brand-yellow-400 rounded-full flex items-center justify-center">
                       <img src="/logo_system.png" alt="Logo" className="w-10 h-10 object-contain" />
                     </div>
