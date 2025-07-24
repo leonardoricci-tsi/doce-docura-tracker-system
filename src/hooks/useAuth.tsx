@@ -117,7 +117,7 @@ export const useAuth = () => {
         .eq('email', email)
         .eq('code', invitationCode)
         .eq('consumed', false)
-        .single();
+        .maybeSingle();
 
       if (invitationError || !invitation) {
         console.error('Código de convite inválido:', invitationError);
