@@ -131,7 +131,7 @@ const handler = async (req: Request): Promise<Response> => {
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background-color: #f9f9f9; border-radius: 10px; border: 1px solid #e0e0e0;">
           <div style="text-align: center; margin-bottom: 20px;">
-            <img src="/logo_system.png" alt="Logo MaplyRastro" style="max-width: 150px; height: auto;">
+            <img src="https://paayjqwfaxhjholtblrm.supabase.co/storage/v1/object/public/imagens-publicas//logo_system.png" alt="Logo MaplyRastro" style="max-width: 150px; height: auto;">
             <h1 style="color: #333; margin: 20px 0 10px;">🎉 Convite para Cadastro</h1>
             <p style="font-size: 18px; color: #e74c3c; font-weight: bold; text-transform: uppercase; text-align: center;">
               Acesso: ${tipo_usuario}
