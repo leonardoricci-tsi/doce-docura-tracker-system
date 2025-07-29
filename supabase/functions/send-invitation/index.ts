@@ -127,7 +127,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "MaplyRastro <onboarding@resend.dev>",
       to: [email],
-      subject: "Seu código de convite para acessar "[tipo_usuario],
+      subject: `Seu código de convite para acessar ${tipo_usuario}`,
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background-color: #f9f9f9; border-radius: 10px; border: 1px solid #e0e0e0;">
           <div style="text-align: center; margin-bottom: 20px;">
@@ -144,7 +144,7 @@ const handler = async (req: Request): Promise<Response> => {
           <p style="font-size: 16px; color: #444;">Use esse código para continuar seu cadastro no nosso sistema. Ele é válido por tempo limitado.</p>
           <p style="font-size: 16px; color: #444;">Se você não solicitou este convite, pode ignorar este e-mail com segurança.</p>
 
-          <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+          <hr style="margin: 30px 0; border: none; border-top: 1px soliad #ddd;">
 
           <p style="font-size: 12px; color: #999; text-align: center;">
             © ${new Date().getFullYear()} - MaplyRastro. Todos os direitos reservados.
