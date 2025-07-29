@@ -131,8 +131,12 @@ const handler = async (req: Request): Promise<Response> => {
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background-color: #f9f9f9; border-radius: 10px; border: 1px solid #e0e0e0;">
           <div style="text-align: center; margin-bottom: 20px;">
-            <h1 style="color: #333; margin: 0;">🎉 Convite para Cadastro na aba ${tipo_usuario}</h1>
+            <h1 style="color: #333; margin: 0;">🎉 Convite para Cadastro</h1>
+            <p style="font-size: 18px; color: #e74c3c; font-weight: bold; text-transform: uppercase; text-align: center;">
+              Acesso: ${tipo_usuario}
+            </p>
           </div>
+
           <p style="font-size: 16px; color: #444;">Olá!</p>
           <p style="font-size: 16px; color: #444;">Você recebeu um código de convite para criar sua conta no sistema, na aba ${tipo_usuario}.</p>
           
