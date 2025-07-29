@@ -28,7 +28,7 @@
     --accent: 255 251 214; /* brand-yellow-200 mais claro */
     --accent-foreground: 122 109 79;
 
-    --destructive: 239 68 68;
+    --destructive: 185 96 96; /* Vermelho mais suave e cinema-friendly */
     --destructive-foreground: 255 255 255;
 
     --border: 230 230 230; /* brand-neutral-300 mais claro */
@@ -69,8 +69,8 @@
     --accent: 186 168 130; /* brand-brown-600 mais claro */
     --accent-foreground: 255 251 214;
 
-    --destructive: 239 68 68;
-    --destructive-foreground: 255 255 255;
+    --destructive: 205 120 120; /* Vermelho mais suave para modo escuro */
+    --destructive-foreground: 253 253 253;
 
     --border: 186 168 130;
     --input: 186 168 130;
@@ -101,6 +101,22 @@
 @layer components {
   .brand-gradient {
     @apply bg-gradient-to-br from-brand-neutral-50 via-brand-yellow-50 to-brand-yellow-200;
+  }
+  
+  .toast-success {
+    @apply bg-emerald-50 text-emerald-700 border-emerald-200;
+  }
+  
+  .toast-error {
+    @apply bg-rose-50 text-rose-700 border-rose-200;
+  }
+  
+  .toast-warning {
+    @apply bg-amber-50 text-amber-700 border-amber-200;
+  }
+  
+  .toast-info {
+    @apply bg-blue-50 text-blue-700 border-blue-200;
   }
   
   .brand-card {
