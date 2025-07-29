@@ -125,16 +125,16 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send email with invitation code
     const emailResponse = await resend.emails.send({
-      from: "Sistema <onboarding@resend.dev>",
+      from: "MaplyRastro <onboarding@resend.dev>",
       to: [email],
-      subject: "Seu código de convite",
+      subject: "Seu código de convite para acessar "[tipo_usuario],
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background-color: #f9f9f9; border-radius: 10px; border: 1px solid #e0e0e0;">
           <div style="text-align: center; margin-bottom: 20px;">
-            <h1 style="color: #333; margin: 0;">🎉 Convite para Cadastro</h1>
+            <h1 style="color: #333; margin: 0;">🎉 Convite para Cadastro na aba ${tipo_usuario}</h1>
           </div>
           <p style="font-size: 16px; color: #444;">Olá!</p>
-          <p style="font-size: 16px; color: #444;">Você recebeu um código de convite para criar sua conta no sistema.</p>
+          <p style="font-size: 16px; color: #444;">Você recebeu um código de convite para criar sua conta no sistema, na aba ${tipo_usuario}.</p>
           
           <div style="background-color: #ffffff; border: 1px dashed #007bff; padding: 20px; margin: 20px 0; text-align: center; border-radius: 8px;">
             <p style="font-size: 18px; color: #333; margin: 0;">Seu código de convite é:</p>
