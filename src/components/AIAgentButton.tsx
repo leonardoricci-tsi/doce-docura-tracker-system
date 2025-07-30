@@ -7,6 +7,7 @@ declare global {
   interface Window {
     CozeWebSDK: {
       WebChatClient: new (config: {
+        el: HTMLElement;
         config: { bot_id: string };
         componentProps: { title: string };
         auth: {
@@ -14,7 +15,7 @@ declare global {
           token: string;
           onRefreshToken: () => string;
         };
-      }) => void;
+      }) => any;
     };
   }
 }
@@ -28,6 +29,7 @@ export const AIAgentButton = () => {
     if (isOpen && window.CozeWebSDK && chatContainerRef.current && !chatClientRef.current) {
       try {
         chatClientRef.current = new window.CozeWebSDK.WebChatClient({
+          el: chatContainerRef.current, 
           config: {
             bot_id: '7532925215522029573',
           },
