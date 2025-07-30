@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RegistroDistribuicao } from '@/components/RegistroDistribuicao';
 import { Rastreabilidade } from '@/components/Rastreabilidade';
 import { RoleBasedAccess } from '@/components/RoleBasedAccess';
+import { AIAgentButton } from '@/components/AIAgentButton';
 
 interface DistribuidorDashboardProps {
   currentUser: string;
@@ -67,6 +68,9 @@ export const DistribuidorDashboard = ({ currentUser, onLogout }: DistribuidorDas
             </TabsContent>
           </Tabs>
         </main>
+
+        {/* AI Agent Button */}
+        <AIAgentButton />
       </div>
     </RoleBasedAccess>
   );
