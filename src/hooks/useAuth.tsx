@@ -44,7 +44,7 @@ export const useAuth = () => {
 
       console.log('Login realizado com sucesso:', data.user?.id);
 
-      // Verificar se o perfil existe, se não, criar apenas se necessário
+      // Verificar se o perfil existe no banco de dados
       if (data.user) {
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
@@ -54,28 +54,28 @@ export const useAuth = () => {
 
         if (profileError) {
           console.error('Erro ao buscar perfil:', profileError);
+          toast({
+            title: "Erro de acesso",
+            description: "Erro ao verificar permissões do usuário.",
+            variant: "destructive"
+          });
+          await supabase.auth.signOut();
+          return;
         }
 
-        // Só criar perfil se realmente não existir (não deve acontecer após o cadastro corrigido)
+        // Se o perfil não existir, o usuário não tem acesso autorizado
         if (!profile) {
-          console.log('Perfil não encontrado após login, criando perfil básico');
-          const { error: insertError } = await supabase
-            .from('profiles')
-            .insert({
-              id: data.user.id,
-              email: data.user.email || email,
-              tipo_usuario: role || 'distribuidor'
-            });
-
-          if (insertError) {
-            console.error('Erro ao criar perfil:', insertError);
-            toast({
-              title: "Aviso",
-              description: "Login realizado, mas houve um problema ao criar o perfil.",
-              variant: "default"
-            });
-          }
+          console.log('Usuário sem perfil autorizado tentou fazer login');
+          toast({
+            title: "Acesso negado",
+            description: "Usuário não autorizado. Entre em contato com o administrador para obter acesso.",
+            variant: "destructive"
+          });
+          await supabase.auth.signOut();
+          return;
         }
+
+        console.log('Perfil encontrado, tipo de usuário:', profile.tipo_usuario);
       }
 
       onSuccess(role, email);
