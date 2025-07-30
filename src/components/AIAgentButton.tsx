@@ -26,27 +26,49 @@ export const AIAgentButton = () => {
   const chatClientRef = useRef<any>(null);
 
   useEffect(() => {
-    if (isOpen && window.CozeWebSDK && chatContainerRef.current && !chatClientRef.current) {
-      try {
-        chatClientRef.current = new window.CozeWebSDK.WebChatClient({
-          el: chatContainerRef.current, 
-          config: {
-            bot_id: '7532925215522029573',
-          },
-          componentProps: {
-            title: 'Assistente IA MaplyRastro',
-          },
-          auth: {
-            type: 'token',
-            token: 'pat_iwzBQyblroWu6fIbrGS7OvkLMSBowwzeNSuwTC1EvdUIDAIO1UuFDmViXukjfWFD',
-            onRefreshToken: function () {
-              return 'pat_iwzBQyblroWu6fIbrGS7OvkLMSBowwzeNSuwTC1EvdUIDAIO1UuFDmViXukjfWFD';
-            }
+    const initializeCoze = async () => {
+      if (isOpen && chatContainerRef.current && !chatClientRef.current) {
+        // Clear container first
+        chatContainerRef.current.innerHTML = '';
+        
+        try {
+          // Wait for SDK to be available
+          if (!window.CozeWebSDK) {
+            console.error('Coze WebSDK não está disponível');
+            return;
           }
-        });
-      } catch (error) {
-        console.error('Erro ao inicializar Coze WebSDK:', error);
+
+          console.log('Inicializando Coze WebSDK...');
+          
+          chatClientRef.current = new window.CozeWebSDK.WebChatClient({
+            el: chatContainerRef.current,
+            config: {
+              bot_id: '7532925215522029573',
+            },
+            componentProps: {
+              title: 'Assistente IA MaplyRastro',
+            },
+            auth: {
+              type: 'token',
+              token: 'pat_iwzBQyblroWu6fIbrGS7OvkLMSBowwzeNSuwTC1EvdUIDAIO1UuFDmViXukjfWFD',
+              onRefreshToken: function () {
+                return 'pat_iwzBQyblroWu6fIbrGS7OvkLMSBowwzeNSuwTC1EvdUIDAIO1UuFDmViXukjfWFD';
+              }
+            }
+          });
+          
+          console.log('Coze WebSDK inicializado com sucesso');
+        } catch (error) {
+          console.error('Erro ao inicializar Coze WebSDK:', error);
+          console.log('SDK disponível:', !!window.CozeWebSDK);
+          console.log('Container:', chatContainerRef.current);
+        }
       }
+    };
+
+    if (isOpen) {
+      // Small delay to ensure DOM is ready
+      setTimeout(initializeCoze, 100);
     }
   }, [isOpen]);
 
