@@ -36,9 +36,9 @@ export const AIAgentButton = () => {
           },
           auth: {
             type: 'token',
-            token: 'pat_********', // Substitua pelo token real
+            token: 'pat_iwzBQyblroWu6fIbrGS7OvkLMSBowwzeNSuwTC1EvdUIDAIO1UuFDmViXukjfWFD',
             onRefreshToken: function () {
-              return 'pat_********'; // Substitua pelo token real
+              return 'pat_iwzBQyblroWu6fIbrGS7OvkLMSBowwzeNSuwTC1EvdUIDAIO1UuFDmViXukjfWFD';
             }
           }
         });
