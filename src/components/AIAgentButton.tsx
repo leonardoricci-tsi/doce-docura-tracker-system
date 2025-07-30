@@ -1,82 +1,77 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Bot, MessageCircle, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Bot, MessageCircle, X, Send } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
-declare global {
-  interface Window {
-    CozeWebSDK: {
-      WebChatClient: new (config: {
-        el: HTMLElement;
-        config: { bot_id: string };
-        componentProps: { title: string };
-        auth: {
-          type: string;
-          token: string;
-          onRefreshToken: () => string;
-        };
-      }) => any;
-    };
-  }
+interface Message {
+  id: string;
+  content: string;
+  isUser: boolean;
+  timestamp: Date;
 }
 
 export const AIAgentButton = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
-  const chatClientRef = useRef<any>(null);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      content: 'Olá! Sou o assistente IA do MaplyRastro. Como posso ajudá-lo hoje?',
+      isUser: false,
+      timestamp: new Date()
+    }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const initializeCoze = async () => {
-      if (isOpen && chatContainerRef.current && !chatClientRef.current) {
-        // Clear container first
-        chatContainerRef.current.innerHTML = '';
-        
-        try {
-          // Wait for SDK to be available
-          if (!window.CozeWebSDK) {
-            console.error('Coze WebSDK não está disponível');
-            return;
-          }
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
-          console.log('Inicializando Coze WebSDK...');
-          
-          chatClientRef.current = new window.CozeWebSDK.WebChatClient({
-            el: chatContainerRef.current,
-            config: {
-              bot_id: '7532925215522029573',
-            },
-            componentProps: {
-              title: 'Assistente IA MaplyRastro',
-            },
-            auth: {
-              type: 'token',
-              token: 'pat_iwzBQyblroWu6fIbrGS7OvkLMSBowwzeNSuwTC1EvdUIDAIO1UuFDmViXukjfWFD',
-              onRefreshToken: function () {
-                return 'pat_iwzBQyblroWu6fIbrGS7OvkLMSBowwzeNSuwTC1EvdUIDAIO1UuFDmViXukjfWFD';
-              }
-            }
-          });
-          
-          console.log('Coze WebSDK inicializado com sucesso');
-        } catch (error) {
-          console.error('Erro ao inicializar Coze WebSDK:', error);
-          console.log('SDK disponível:', !!window.CozeWebSDK);
-          console.log('Container:', chatContainerRef.current);
-        }
-      }
+  const sendMessage = async () => {
+    if (!inputMessage.trim() || isLoading) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      content: inputMessage,
+      isUser: true,
+      timestamp: new Date()
     };
 
-    if (isOpen) {
-      // Small delay to ensure DOM is ready
-      setTimeout(initializeCoze, 100);
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsLoading(true);
+
+    try {
+      // Simular resposta da IA (substitua pela integração real com Coze API)
+      setTimeout(() => {
+        const aiResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          content: `Recebi sua mensagem: "${userMessage.content}". Esta é uma resposta simulada. Em breve integraremos com a API do Coze para respostas reais.`,
+          isUser: false,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, aiResponse]);
+        setIsLoading(false);
+        setTimeout(scrollToBottom, 100);
+      }, 1000);
+    } catch (error) {
+      console.error('Erro ao enviar mensagem:', error);
+      setIsLoading(false);
     }
-  }, [isOpen]);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
 
   const handleClose = () => {
     setIsOpen(false);
-    if (chatClientRef.current) {
-      chatClientRef.current = null;
-    }
   };
 
   return (
@@ -92,10 +87,10 @@ export const AIAgentButton = () => {
         </Button>
       </div>
 
-      {/* AI Agent Modal */}
+      {/* AI Agent Chat Modal */}
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="max-w-2xl max-h-[80vh] bg-brand-AmareloOuro border-brand-brown-800">
-          <DialogHeader className="flex flex-row items-center justify-between">
+        <DialogContent className="max-w-md max-h-[600px] bg-white border-brand-brown-800 p-0 overflow-hidden">
+          <DialogHeader className="flex flex-row items-center justify-between p-4 border-b border-brand-brown-200 bg-brand-AmareloOuro">
             <DialogTitle className="text-brand-brown-800 flex items-center gap-2">
               <Bot className="h-5 w-5" />
               Assistente IA MaplyRastro
@@ -110,12 +105,67 @@ export const AIAgentButton = () => {
             </Button>
           </DialogHeader>
           
-          {/* Container para o Coze WebSDK */}
-          <div 
-            ref={chatContainerRef}
-            id="coze-chat-container"
-            className="w-full h-96 bg-white rounded-lg overflow-hidden"
-          />
+          {/* Chat Messages */}
+          <ScrollArea className="flex-1 h-96 p-4">
+            <div className="space-y-4">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-[80%] rounded-lg p-3 ${
+                      message.isUser
+                        ? 'bg-brand-brown-800 text-white'
+                        : 'bg-brand-AmareloOuro text-brand-brown-800 border border-brand-brown-200'
+                    }`}
+                  >
+                    <p className="text-sm">{message.content}</p>
+                    <span className="text-xs opacity-70 mt-1 block">
+                      {message.timestamp.toLocaleTimeString('pt-BR', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-brand-AmareloOuro text-brand-brown-800 border border-brand-brown-200 rounded-lg p-3 max-w-[80%]">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-brand-brown-800 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-brand-brown-800 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-brand-brown-800 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          </ScrollArea>
+
+          {/* Input Area */}
+          <div className="p-4 border-t border-brand-brown-200 bg-white">
+            <div className="flex space-x-2">
+              <Input
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Digite sua mensagem..."
+                className="flex-1 border-brand-brown-300 focus:border-brand-brown-800"
+                disabled={isLoading}
+              />
+              <Button
+                onClick={sendMessage}
+                disabled={!inputMessage.trim() || isLoading}
+                className="bg-brand-brown-800 hover:bg-brand-brown-700 text-white"
+                size="icon"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </>
