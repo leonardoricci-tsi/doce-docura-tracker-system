@@ -108,9 +108,12 @@ export const useAuth = () => {
 
     setIsLoading(true);
     try {
-      console.log('Verificando código de convite para:', email);
+      console.log('=== INICIO DO SIGNUP ===');
+      console.log('Email:', email);
+      console.log('Código:', invitationCode);
       
       // Verificar se o código de convite é válido
+      console.log('Buscando convite...');
       const { data: invitation, error: invitationError } = await supabase
         .from('sign_up_invitations')
         .select('*')
@@ -118,6 +121,8 @@ export const useAuth = () => {
         .eq('code', invitationCode)
         .eq('consumed', false)
         .maybeSingle();
+
+      console.log('Resultado da busca do convite:', { invitation, invitationError });
 
       if (invitationError || !invitation) {
         console.error('Código de convite inválido:', invitationError);
