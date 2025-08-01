@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { useQualityAnalytics } from '@/hooks/useAnalytics';
+import { useLotesProducao } from '@/hooks/useLotesProducao';
 
 const historicoQualidade = [
   { mes: 'Jan', aprovados: 95.2, rejeitados: 4.8 },
@@ -52,6 +54,12 @@ const inspecoesRecentes = [
 
 export const DashboardQualidade = () => {
   const [filtroTipo, setFiltroTipo] = useState('todos');
+  const { data: analytics, isLoading: analyticsLoading } = useQualityAnalytics();
+  const { data: lotes = [], isLoading: lotesLoading } = useLotesProducao();
+
+  if (analyticsLoading || lotesLoading) {
+    return <div className="flex items-center justify-center h-64">Carregando dados de qualidade...</div>;
+  }
 
   const getResultadoColor = (resultado: string) => {
     switch (resultado) {
@@ -96,9 +104,9 @@ export const DashboardQualidade = () => {
                 <span className="text-2xl">✅</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-green-600">98.5%</p>
+                <p className="text-2xl font-bold text-green-600">{analytics?.taxaAprovacao || 0}%</p>
                 <p className="text-sm text-sweet-gold-600">Taxa de Aprovação</p>
-                <p className="text-xs text-green-600">+0.4% vs mês anterior</p>
+                <p className="text-xs text-green-600">Baseado em lotes ativos</p>
               </div>
             </div>
           </CardContent>
@@ -111,9 +119,9 @@ export const DashboardQualidade = () => {
                 <span className="text-2xl">🔬</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-sweet-pink-600">168</p>
-                <p className="text-sm text-sweet-gold-600">Testes Realizados</p>
-                <p className="text-xs text-blue-600">Este mês</p>
+                <p className="text-2xl font-bold text-sweet-pink-600">{analytics?.totalLotes || 0}</p>
+                <p className="text-sm text-sweet-gold-600">Lotes Analisados</p>
+                <p className="text-xs text-blue-600">Total no sistema</p>
               </div>
             </div>
           </CardContent>
@@ -126,9 +134,9 @@ export const DashboardQualidade = () => {
                 <span className="text-2xl">❌</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-red-600">3</p>
+                <p className="text-2xl font-bold text-red-600">{analytics?.lotesRejeitados || 0}</p>
                 <p className="text-sm text-sweet-gold-600">Lotes Rejeitados</p>
-                <p className="text-xs text-red-600">Este mês</p>
+                <p className="text-xs text-red-600">Status inativo</p>
               </div>
             </div>
           </CardContent>
@@ -141,9 +149,9 @@ export const DashboardQualidade = () => {
                 <span className="text-2xl">⏱️</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-blue-600">2.3h</p>
-                <p className="text-sm text-sweet-gold-600">Tempo Médio de Teste</p>
-                <p className="text-xs text-green-600">-15min vs média</p>
+                <p className="text-2xl font-bold text-blue-600">{analytics?.lotesAprovados || 0}</p>
+                <p className="text-sm text-sweet-gold-600">Lotes Aprovados</p>
+                <p className="text-xs text-green-600">Status ativo</p>
               </div>
             </div>
           </CardContent>
@@ -187,7 +195,7 @@ export const DashboardQualidade = () => {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={testesPorProduto}>
+              <BarChart data={analytics?.produtoStats || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="produto" />
                 <YAxis />
@@ -223,7 +231,7 @@ export const DashboardQualidade = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {testesPorProduto.map((item) => (
+                {analytics?.produtoStats?.map((item) => (
                   <TableRow key={item.produto}>
                     <TableCell className="font-medium">{item.produto}</TableCell>
                     <TableCell>{item.testes}</TableCell>
@@ -236,7 +244,7 @@ export const DashboardQualidade = () => {
                             style={{width: `${item.taxa}%`}}
                           ></div>
                         </div>
-                        <span className="text-sm font-medium">{item.taxa}%</span>
+                        <span className="text-sm font-medium">{item.taxa.toFixed(1)}%</span>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -245,7 +253,7 @@ export const DashboardQualidade = () => {
                       </Badge>
                     </TableCell>
                   </TableRow>
-                ))}
+                )) || []}
               </TableBody>
             </Table>
           </div>
@@ -277,18 +285,18 @@ export const DashboardQualidade = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {inspecoesRecentes.map((inspecao) => (
-                  <TableRow key={inspecao.id}>
-                    <TableCell className="font-medium">{inspecao.id}</TableCell>
-                    <TableCell>{inspecao.lote}</TableCell>
-                    <TableCell>{inspecao.produto}</TableCell>
-                    <TableCell>{new Date(inspecao.data).toLocaleDateString()}</TableCell>
+                {lotes.slice(0, 10).map((lote) => (
+                  <TableRow key={lote.id}>
+                    <TableCell className="font-medium">{lote.codigo_lote}</TableCell>
+                    <TableCell>{lote.codigo_lote}</TableCell>
+                    <TableCell>{lote.produtos?.nome || 'N/A'}</TableCell>
+                    <TableCell>{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell>
-                      <Badge className={getResultadoColor(inspecao.resultado)}>
-                        {getResultadoText(inspecao.resultado)}
+                      <Badge className={getResultadoColor(lote.status === 'ativo' ? 'aprovado' : 'rejeitado')}>
+                        {getResultadoText(lote.status === 'ativo' ? 'aprovado' : 'rejeitado')}
                       </Badge>
                     </TableCell>
-                    <TableCell className="max-w-xs truncate">{inspecao.observacoes}</TableCell>
+                    <TableCell className="max-w-xs truncate">{lote.observacoes || 'Sem observações'}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline" className="border-sweet-gold-300 hover:bg-sweet-gold-100">

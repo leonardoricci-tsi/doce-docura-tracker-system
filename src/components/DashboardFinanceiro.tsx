@@ -1,6 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import { useFinancialAnalytics } from '@/hooks/useAnalytics';
 
 const receitaMensal = [
   { mes: 'Jan', receita: 45000, custo: 28000, lucro: 17000 },
@@ -22,6 +23,12 @@ const custosProducao = [
 const COLORS = ['#ec4899', '#f59e0b', '#10b981', '#8b5cf6', '#f97316'];
 
 export const DashboardFinanceiro = () => {
+  const { data: analytics, isLoading } = useFinancialAnalytics();
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-64">Carregando dados financeiros...</div>;
+  }
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -39,9 +46,11 @@ export const DashboardFinanceiro = () => {
                 <span className="text-2xl">💰</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-green-600">R$ 58k</p>
-                <p className="text-sm text-sweet-gold-600">Receita Mensal</p>
-                <p className="text-xs text-green-600">+12% vs mês anterior</p>
+                <p className="text-2xl font-bold text-green-600">
+                  R$ {analytics?.receita ? (analytics.receita / 1000).toFixed(1) : '0'}k
+                </p>
+                <p className="text-sm text-sweet-gold-600">Receita Total</p>
+                <p className="text-xs text-green-600">{analytics?.numeroVendas || 0} vendas</p>
               </div>
             </div>
           </CardContent>
@@ -54,9 +63,11 @@ export const DashboardFinanceiro = () => {
                 <span className="text-2xl">📉</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-red-600">R$ 35k</p>
-                <p className="text-sm text-sweet-gold-600">Custos Totais</p>
-                <p className="text-xs text-red-600">+5% vs mês anterior</p>
+                <p className="text-2xl font-bold text-red-600">
+                  R$ {analytics?.custos ? (analytics.custos / 1000).toFixed(1) : '0'}k
+                </p>
+                <p className="text-sm text-sweet-gold-600">Custos Estimados</p>
+                <p className="text-xs text-red-600">60% da receita</p>
               </div>
             </div>
           </CardContent>
@@ -69,9 +80,11 @@ export const DashboardFinanceiro = () => {
                 <span className="text-2xl">📈</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-sweet-gold-800">R$ 23k</p>
-                <p className="text-sm text-sweet-gold-600">Lucro Líquido</p>
-                <p className="text-xs text-green-600">+18% vs mês anterior</p>
+                <p className="text-2xl font-bold text-sweet-gold-800">
+                  R$ {analytics?.lucro ? (analytics.lucro / 1000).toFixed(1) : '0'}k
+                </p>
+                <p className="text-sm text-sweet-gold-600">Lucro Estimado</p>
+                <p className="text-xs text-green-600">40% da receita</p>
               </div>
             </div>
           </CardContent>
@@ -84,9 +97,11 @@ export const DashboardFinanceiro = () => {
                 <span className="text-2xl">💹</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-blue-600">39.7%</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {analytics?.margem ? analytics.margem.toFixed(1) : '0'}%
+                </p>
                 <p className="text-sm text-sweet-gold-600">Margem de Lucro</p>
-                <p className="text-xs text-green-600">+2.3% vs mês anterior</p>
+                <p className="text-xs text-green-600">Baseado em vendas atuais</p>
               </div>
             </div>
           </CardContent>

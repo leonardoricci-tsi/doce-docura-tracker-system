@@ -7,38 +7,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
+import { useProducts, useCreateProduct } from '@/hooks/useProducts';
+import { useLotesProducao, useCreateLoteProducao } from '@/hooks/useLotesProducao';
+import { useDistribuidores } from '@/hooks/useDistribuidores';
 
-interface ProducaoData {
-  id: string;
-  numeroLote: string;
-  produto: string;
-  sabor: string;
-  quantidadeProduzida: number;
-  dataFabricacao: string;
-  dataValidade: string;
-  notaFiscal: string;
-  distribuidor: string;
-}
-
-const produtos = [
-  'Pão de Mel',
-  'Alfajor'
-];
-const sabor= [
+const saboresDisponiveis = [
   'Brigadeiro',
   'Creme de Nozes',
   'Doce de Leite',
-];
-
-const distribuidores = [
-  'Distribuidora São Paulo',
-  'Distribuidora Rio de Janeiro',
-  'Distribuidora Minas Gerais',
-  'Distribuidora Sul'
+  'Leite Condensado',
+  'Chocolate',
+  'Tradicional'
 ];
 
 export const GerenciamentoProducao = () => {
-  const [producoes, setProducoes] = useState<ProducaoData[]>([]);
+  const { data: produtos = [] } = useProducts();
+  const { data: lotes = [] } = useLotesProducao();
+  const { data: distribuidores = [] } = useDistribuidores();
+  const createProductMutation = useCreateProduct();
+  const createLoteMutation = useCreateLoteProducao();
   const [editingId, setEditingId] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -50,7 +37,7 @@ export const GerenciamentoProducao = () => {
     dataFabricacao: '',
     dataValidade: '',
     notaFiscal: '',
-    distribuidor: ''
+    responsavel: ''
   });
 
   const resetForm = () => {
@@ -62,7 +49,7 @@ export const GerenciamentoProducao = () => {
       dataFabricacao: '',
       dataValidade: '',
       notaFiscal: '',
-      distribuidor: ''
+      responsavel: ''
     });
     setEditingId(null);
   };
@@ -71,15 +58,15 @@ export const GerenciamentoProducao = () => {
     const errors = [];
     if (!formData.numeroLote) errors.push('Número do Lote');
     if (!formData.produto) errors.push('Produto');
-    if (!formData.sabor) errors.push('Sabor');
     if (!formData.quantidadeProduzida) errors.push('Quantidade Produzida');
     if (!formData.dataFabricacao) errors.push('Data de Fabricação');
     if (!formData.dataValidade) errors.push('Data de Validade');
+    if (!formData.responsavel) errors.push('Responsável');
     
     return errors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const errors = validateForm();
@@ -92,54 +79,73 @@ export const GerenciamentoProducao = () => {
       return;
     }
 
-    const novaProducao: ProducaoData = {
-      id: editingId || Date.now().toString(),
-      numeroLote: formData.numeroLote,
-      produto: formData.produto,
-      sabor: formData.sabor,
-      quantidadeProduzida: parseInt(formData.quantidadeProduzida),
-      dataFabricacao: formData.dataFabricacao,
-      dataValidade: formData.dataValidade,
-      notaFiscal: formData.notaFiscal,
-      distribuidor: formData.distribuidor
-    };
+    try {
+      // Primeiro, criar ou verificar se o produto existe
+      let produtoSelecionado = produtos.find(p => p.id === formData.produto);
+      
+      if (!produtoSelecionado && formData.produto) {
+        // Se não encontrar o produto pelo ID, verificar se é um novo produto
+        const novoProduto = {
+          nome: formData.produto,
+          tipo: 'doce',
+          sabor: formData.sabor || null,
+          descricao: `Produto criado durante produção do lote ${formData.numeroLote}`,
+          preco_unitario: null
+        };
+        
+        produtoSelecionado = await createProductMutation.mutateAsync(novoProduto);
+      }
 
-    if (editingId) {
-      setProducoes(prev => prev.map(p => p.id === editingId ? novaProducao : p));
-      toast({
-        title: "Produção atualizada",
-        description: "Os dados da produção foram atualizados com sucesso."
-      });
-    } else {
-      setProducoes(prev => [...prev, novaProducao]);
+      // Criar o lote de produção
+      const novoLote = {
+        produto_id: produtoSelecionado?.id || formData.produto,
+        codigo_lote: formData.numeroLote,
+        quantidade_produzida: parseInt(formData.quantidadeProduzida),
+        data_producao: formData.dataFabricacao,
+        data_validade: formData.dataValidade,
+        nota_fiscal: formData.notaFiscal || null,
+        responsavel: formData.responsavel,
+        observacoes: formData.sabor ? `Sabor: ${formData.sabor}` : null,
+        status: 'ativo'
+      };
+
+      await createLoteMutation.mutateAsync(novoLote);
+
       toast({
         title: "Produção salva",
         description: "Nova produção cadastrada com sucesso."
       });
-    }
 
-    resetForm();
+      resetForm();
+    } catch (error: any) {
+      console.error('Erro ao salvar produção:', error);
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao salvar a produção. Tente novamente.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleEdit = (producao: ProducaoData) => {
+  const handleEdit = (lote: any) => {
     setFormData({
-      numeroLote: producao.numeroLote,
-      produto: producao.produto,
-      sabor: producao.sabor,
-      quantidadeProduzida: producao.quantidadeProduzida.toString(),
-      dataFabricacao: producao.dataFabricacao,
-      dataValidade: producao.dataValidade,
-      notaFiscal: producao.notaFiscal,
-      distribuidor: producao.distribuidor
+      numeroLote: lote.codigo_lote,
+      produto: lote.produto_id,
+      sabor: lote.observacoes?.includes('Sabor:') ? lote.observacoes.split('Sabor: ')[1] : '',
+      quantidadeProduzida: lote.quantidade_produzida.toString(),
+      dataFabricacao: lote.data_producao,
+      dataValidade: lote.data_validade,
+      notaFiscal: lote.nota_fiscal || '',
+      responsavel: lote.responsavel
     });
-    setEditingId(producao.id);
+    setEditingId(lote.id);
   };
 
   const handleDelete = (id: string) => {
-    setProducoes(prev => prev.filter(p => p.id !== id));
+    // Por enquanto apenas alerta, implementar delete mutation se necessário
     toast({
-      title: "Produção excluída",
-      description: "A produção foi removida com sucesso."
+      title: "Ação não disponível",
+      description: "A exclusão de lotes será implementada posteriormente."
     });
   };
 
@@ -176,7 +182,7 @@ export const GerenciamentoProducao = () => {
                 </SelectTrigger>
                 <SelectContent className="bg-brand-yellow-100">
                   {produtos.map(produto => (
-                    <SelectItem className="bg-brand-yellow-50" key={produto} value={produto}>{produto} </SelectItem>
+                    <SelectItem className="bg-brand-yellow-50" key={produto.id} value={produto.id}>{produto.nome}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -189,8 +195,8 @@ export const GerenciamentoProducao = () => {
                   <SelectValue placeholder="Selecione o sabor" />
                 </SelectTrigger>
                 <SelectContent className="bg-brand-yellow-100">
-                  {sabor.map(sabor => (
-                    <SelectItem className="bg-brand-yellow-50" key={sabor} value={sabor}>{sabor} </SelectItem>
+                  {saboresDisponiveis.map(sabor => (
+                    <SelectItem className="bg-brand-yellow-50" key={sabor} value={sabor}>{sabor}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -242,22 +248,23 @@ export const GerenciamentoProducao = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="distribuidor" className="text-brand-brown-800">Distribuidor</Label>
-              <Select value={formData.distribuidor} onValueChange={(value) => setFormData(prev => ({ ...prev, distribuidor: value }))}>
-                <SelectTrigger className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none">
-                  <SelectValue placeholder="Selecione o distribuidor" />
-                </SelectTrigger>
-                <SelectContent className="bg-brand-yellow-100">
-                  {distribuidores.map(distribuidor => (
-                    <SelectItem className="bg-brand-yellow-50" key={distribuidor} value={distribuidor}>{distribuidor}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label htmlFor="responsavel" className="text-brand-brown-800">Responsável *</Label>
+              <Input
+                id="responsavel"
+                value={formData.responsavel}
+                onChange={(e) => setFormData(prev => ({ ...prev, responsavel: e.target.value }))}
+                placeholder="Nome do responsável pela produção"
+                className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none"
+              />
             </div>
 
             <div className="md:col-span-2 flex gap-4 pt-4">
-              <Button type="submit" className="sweet-button flex-1 bg-primaria text-brand-yellow-300 hover:bg-orange-900">
-                {editingId ? '📝 Atualizar Produção' : '💾 Salvar Produção'}
+              <Button 
+                type="submit" 
+                className="sweet-button flex-1 bg-primaria text-brand-yellow-300 hover:bg-orange-900"
+                disabled={createLoteMutation.isPending || createProductMutation.isPending}
+              >
+                {createLoteMutation.isPending || createProductMutation.isPending ? '⏳ Salvando...' : (editingId ? '📝 Atualizar Produção' : '💾 Salvar Produção')}
               </Button>
               {editingId && (
                 <Button type="button" variant="outline" onClick={resetForm} className="border-sweet-cream-400">
@@ -280,7 +287,7 @@ export const GerenciamentoProducao = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {producoes.length === 0 ? (
+          {lotes.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-brand-brown-700">Nenhuma produção cadastrada ainda.</p>
               <p className="text-sm text-brand-brown-600">Cadastre sua primeira produção usando o formulário acima.</p>
@@ -291,30 +298,34 @@ export const GerenciamentoProducao = () => {
                 <TableRow>
                   <TableHead className="text-brand-brown-800">Lote</TableHead>
                   <TableHead className="text-brand-brown-800">Produto</TableHead>
-                  <TableHead className="text-brand-brown-800">Sabor</TableHead>
                   <TableHead className="text-brand-brown-800">Quantidade</TableHead>
                   <TableHead className="text-brand-brown-800">Data Fab.</TableHead>
                   <TableHead className="text-brand-brown-800">Data Val.</TableHead>
-                  <TableHead className="text-brand-brown-800">Distribuidor</TableHead>
+                  <TableHead className="text-brand-brown-800">Responsável</TableHead>
+                  <TableHead className="text-brand-brown-800">Status</TableHead>
                   <TableHead className="text-brand-brown-800">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {producoes.map((producao) => (
-                  <TableRow key={producao.id}>
-                    <TableCell className="font-medium text-brand-brown-800">{producao.numeroLote}</TableCell>
-                    <TableCell className="text-brand-brown-800">{producao.produto}</TableCell>
-                    <TableCell className="text-brand-brown-800">{producao.sabor}</TableCell>
-                    <TableCell className="text-brand-brown-800">{producao.quantidadeProduzida}</TableCell>
-                    <TableCell className="text-brand-brown-800">{new Date(producao.dataFabricacao).toLocaleDateString()}</TableCell>
-                    <TableCell className="text-brand-brown-800">{new Date(producao.dataValidade).toLocaleDateString()}</TableCell>
-                    <TableCell className="text-brand-brown-800">{producao.distribuidor}</TableCell>
+                {lotes.map((lote) => (
+                  <TableRow key={lote.id}>
+                    <TableCell className="font-medium text-brand-brown-800">{lote.codigo_lote}</TableCell>
+                    <TableCell className="text-brand-brown-800">{lote.produtos?.nome || 'N/A'}</TableCell>
+                    <TableCell className="text-brand-brown-800">{lote.quantidade_produzida}</TableCell>
+                    <TableCell className="text-brand-brown-800">{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
+                    <TableCell className="text-brand-brown-800">{new Date(lote.data_validade).toLocaleDateString('pt-BR')}</TableCell>
+                    <TableCell className="text-brand-brown-800">{lote.responsavel}</TableCell>
+                    <TableCell className="text-brand-brown-800">
+                      <span className={`px-2 py-1 rounded-full text-xs ${lote.status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                        {lote.status}
+                      </span>
+                    </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleEdit(producao)}
+                          onClick={() => handleEdit(lote)}
                           className="border-brand-brown-400 hover:bg-brand-brown-100 text-brand-brown-800"
                         >
                           ✏️
@@ -322,7 +333,7 @@ export const GerenciamentoProducao = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleDelete(producao.id)}
+                          onClick={() => handleDelete(lote.id)}
                           className="border-red-300 hover:bg-red-100 text-red-600"
                         >
                           🗑️

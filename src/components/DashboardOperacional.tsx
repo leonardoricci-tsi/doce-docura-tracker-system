@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useOperationalAnalytics } from '@/hooks/useAnalytics';
+import { useLotesProducao } from '@/hooks/useLotesProducao';
 
 const eficienciaLinhas = [
   { linha: 'Linha 1', eficiencia: 94, status: 'ativa', produto: 'Brigadeiro' },
@@ -29,6 +31,13 @@ const equipamentos = [
 ];
 
 export const DashboardOperacional = () => {
+  const { data: analytics, isLoading: analyticsLoading } = useOperationalAnalytics();
+  const { data: lotes = [], isLoading: lotesLoading } = useLotesProducao();
+
+  if (analyticsLoading || lotesLoading) {
+    return <div className="flex items-center justify-center h-64">Carregando dados operacionais...</div>;
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'operando':
@@ -74,9 +83,9 @@ export const DashboardOperacional = () => {
                 <span className="text-2xl">⚡</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-green-600">91%</p>
+                <p className="text-2xl font-bold text-green-600">{analytics?.eficiencia || 0}%</p>
                 <p className="text-sm text-sweet-gold-600">Eficiência Geral</p>
-                <p className="text-xs text-green-600">+3% vs semana anterior</p>
+                <p className="text-xs text-green-600">Baseado em lotes ativos</p>
               </div>
             </div>
           </CardContent>
@@ -89,9 +98,9 @@ export const DashboardOperacional = () => {
                 <span className="text-2xl">🏭</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-sweet-pink-600">3/4</p>
-                <p className="text-sm text-sweet-gold-600">Linhas Ativas</p>
-                <p className="text-xs text-yellow-600">1 em manutenção</p>
+                <p className="text-2xl font-bold text-sweet-pink-600">{analytics?.lotesAtivos || 0}/{analytics?.totalLotes || 0}</p>
+                <p className="text-sm text-sweet-gold-600">Lotes Ativos</p>
+                <p className="text-xs text-blue-600">Total de lotes</p>
               </div>
             </div>
           </CardContent>
@@ -104,9 +113,9 @@ export const DashboardOperacional = () => {
                 <span className="text-2xl">⏱️</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-blue-600">16.2h</p>
-                <p className="text-sm text-sweet-gold-600">Tempo Operacional</p>
-                <p className="text-xs text-blue-600">De 18h planejadas</p>
+                <p className="text-2xl font-bold text-blue-600">{analytics?.producaoTotal || 0}</p>
+                <p className="text-sm text-sweet-gold-600">Produção Total</p>
+                <p className="text-xs text-blue-600">Unidades produzidas</p>
               </div>
             </div>
           </CardContent>
@@ -119,9 +128,9 @@ export const DashboardOperacional = () => {
                 <span className="text-2xl">📊</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-sweet-gold-800">98.5%</p>
-                <p className="text-sm text-sweet-gold-600">Qualidade</p>
-                <p className="text-xs text-green-600">Acima da meta (95%)</p>
+                <p className="text-2xl font-bold text-sweet-gold-800">{analytics?.lotesRecentes || 0}</p>
+                <p className="text-sm text-sweet-gold-600">Lotes Recentes</p>
+                <p className="text-xs text-green-600">Últimos 30 dias</p>
               </div>
             </div>
           </CardContent>
@@ -151,24 +160,24 @@ export const DashboardOperacional = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {eficienciaLinhas.map((linha) => (
-                  <TableRow key={linha.linha}>
-                    <TableCell className="font-medium">{linha.linha}</TableCell>
-                    <TableCell>{linha.produto}</TableCell>
+                {lotes.slice(0, 5).map((lote) => (
+                  <TableRow key={lote.id}>
+                    <TableCell className="font-medium">{lote.codigo_lote}</TableCell>
+                    <TableCell>{lote.produtos?.nome || 'N/A'}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div className="w-20 bg-gray-200 rounded-full h-2">
                           <div 
-                            className={`h-2 rounded-full ${linha.eficiencia >= 90 ? 'bg-green-500' : linha.eficiencia >= 70 ? 'bg-yellow-500' : 'bg-red-500'}`}
-                            style={{width: `${linha.eficiencia}%`}}
+                            className={`h-2 rounded-full ${lote.status === 'ativo' ? 'bg-green-500' : 'bg-red-500'}`}
+                            style={{width: lote.status === 'ativo' ? '100%' : '50%'}}
                           ></div>
                         </div>
-                        <span className="text-sm font-medium">{linha.eficiencia}%</span>
+                        <span className="text-sm font-medium">{lote.status === 'ativo' ? '100' : '50'}%</span>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getStatusColor(linha.status)}>
-                        {getStatusText(linha.status)}
+                      <Badge className={getStatusColor(lote.status === 'ativo' ? 'operando' : 'parada')}>
+                        {getStatusText(lote.status === 'ativo' ? 'operando' : 'parada')}
                       </Badge>
                     </TableCell>
                     <TableCell>
