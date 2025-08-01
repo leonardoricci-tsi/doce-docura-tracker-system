@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      distribuicao_regioes: {
+        Row: {
+          created_at: string | null
+          distribuicao_id: string
+          id: string
+          regiao_nome: string
+        }
+        Insert: {
+          created_at?: string | null
+          distribuicao_id: string
+          id?: string
+          regiao_nome: string
+        }
+        Update: {
+          created_at?: string | null
+          distribuicao_id?: string
+          id?: string
+          regiao_nome?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "distribuicao_regioes_distribuicao_id_fkey"
+            columns: ["distribuicao_id"]
+            isOneToOne: false
+            referencedRelation: "distribuicoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       distribuicoes: {
         Row: {
           created_at: string | null
@@ -108,6 +137,7 @@ export type Database = {
           data_producao: string
           data_validade: string
           id: string
+          nota_fiscal: string | null
           observacoes: string | null
           produto_id: string
           quantidade_produzida: number
@@ -121,6 +151,7 @@ export type Database = {
           data_producao: string
           data_validade: string
           id?: string
+          nota_fiscal?: string | null
           observacoes?: string | null
           produto_id: string
           quantidade_produzida: number
@@ -134,6 +165,7 @@ export type Database = {
           data_producao?: string
           data_validade?: string
           id?: string
+          nota_fiscal?: string | null
           observacoes?: string | null
           produto_id?: string
           quantidade_produzida?: number
@@ -202,6 +234,7 @@ export type Database = {
           id: string
           nome: string
           preco_unitario: number | null
+          sabor: string | null
           tipo: string
           unidade_medida: string | null
           updated_at: string | null
@@ -212,6 +245,7 @@ export type Database = {
           id?: string
           nome: string
           preco_unitario?: number | null
+          sabor?: string | null
           tipo: string
           unidade_medida?: string | null
           updated_at?: string | null
@@ -222,6 +256,7 @@ export type Database = {
           id?: string
           nome?: string
           preco_unitario?: number | null
+          sabor?: string | null
           tipo?: string
           unidade_medida?: string | null
           updated_at?: string | null
@@ -249,6 +284,30 @@ export type Database = {
           id?: string
           nome?: string | null
           tipo_usuario?: string
+        }
+        Relationships: []
+      }
+      regioes_entrega: {
+        Row: {
+          created_at: string | null
+          estado: string | null
+          id: string
+          nome: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          estado?: string | null
+          id?: string
+          nome: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          estado?: string | null
+          id?: string
+          nome?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
