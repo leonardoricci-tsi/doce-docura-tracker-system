@@ -1,39 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-
-// Mock data for charts
-const saboresData = [
-  { sabor: 'Trufado', quantidade: 150 },
-  { sabor: 'Alfajor', quantidade: 120 },
-  { sabor: 'Doce de Leite', quantidade: 100 },
-  { sabor: 'Nozes', quantidade: 80 },
-];
-
-const regioesData = [
-  { regiao: 'Grande SP', volume: 300 },
-  { regiao: 'Interior SP', volume: 200 },
-  { regiao: 'Rio de Janeiro', volume: 180 },
-  { regiao: 'Minas Gerais', volume: 150 },
-  { regiao: 'Sul do País', volume: 120 }
-];
-
-const produtosProximosVencimento = [
-  {
-    numeroLote: 'LOT003',
-    produto: 'Trufado',
-    dataValidade: '2025-06-29',
-    distribuidor: 'Distribuidora Minas Gerais',
-    diasRestantes: 2
-  },
-  {
-    numeroLote: 'LOT001',
-    produto: 'Alfajor',
-    dataValidade: '2025-06-28',
-    distribuidor: 'Distribuidora São Paulo',
-    diasRestantes: 10
-  }
-];
+import { useAnalyticsStats, useProducaoPorSabor, useDistribuicaoPorRegiao, useProdutosProximosVencimento } from '@/hooks/useAnalyticsData';
 
 const COLORS = ['#ec4899', '#f59e0b', '#10b981', '#8b5cf6', '#f97316'];
 
@@ -44,6 +12,10 @@ const getValidityClass = (dias: number) => {
 };
 
 export const DashboardAnalytics = () => {
+  const { data: stats, isLoading: statsLoading } = useAnalyticsStats();
+  const { data: saboresData, isLoading: saboresLoading } = useProducaoPorSabor();
+  const { data: regioesData, isLoading: regioesLoading } = useDistribuicaoPorRegiao();
+  const { data: produtosProximosVencimento, isLoading: vencimentoLoading } = useProdutosProximosVencimento();
   return (
     <div className="space-y-8">
       {/* Quick Stats */}
@@ -55,7 +27,7 @@ export const DashboardAnalytics = () => {
                 <span className="text-2xl">🏭</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-brand-brown-800">3</p>
+                <p className="text-2xl font-bold text-brand-brown-800">{statsLoading ? '...' : stats?.lotesAtivos || 0}</p>
                 <p className="text-sm text-brand-brown-600">Lotes Ativos</p>
               </div>
             </div>
@@ -69,7 +41,7 @@ export const DashboardAnalytics = () => {
                 <span className="text-2xl">📦</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-brand-brown-800">230</p>
+                <p className="text-2xl font-bold text-brand-brown-800">{statsLoading ? '...' : stats?.totalProduzidos || 0}</p>
                 <p className="text-sm text-brand-brown-600">Produtos Produzidos</p>
               </div>
             </div>
@@ -83,7 +55,7 @@ export const DashboardAnalytics = () => {
                 <span className="text-2xl">🚛</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-brand-brown-800">3</p>
+                <p className="text-2xl font-bold text-brand-brown-800">{statsLoading ? '...' : stats?.distribuidores || 0}</p>
                 <p className="text-sm text-brand-brown-600">Distribuidores</p>
               </div>
             </div>
@@ -97,7 +69,7 @@ export const DashboardAnalytics = () => {
                 <span className="text-2xl">⚠️</span>
               </div>
               <div>
-                <p className="text-2xl font-bold text-red-600">2</p>
+                <p className="text-2xl font-bold text-red-600">{statsLoading ? '...' : stats?.proximosVencimento || 0}</p>
                 <p className="text-sm text-brand-brown-600">Próximos ao Vencimento</p>
               </div>
             </div>
@@ -118,15 +90,21 @@ export const DashboardAnalytics = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={saboresData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="sabor" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="quantidade" fill="#ec4899" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            {saboresLoading ? (
+              <div className="flex items-center justify-center h-[300px]">
+                <p className="text-brand-brown-700">Carregando dados...</p>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={saboresData || []}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="sabor" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="quantidade" fill="#ec4899" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
 
@@ -141,25 +119,31 @@ export const DashboardAnalytics = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={regioesData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ regiao, percent }) => `${regiao} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="volume"
-                >
-                  {regioesData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            {regioesLoading ? (
+              <div className="flex items-center justify-center h-[300px]">
+                <p className="text-brand-brown-700">Carregando dados...</p>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={regioesData || []}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ regiao, percent }) => `${regiao} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="volume"
+                  >
+                    {(regioesData || []).map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -175,7 +159,11 @@ export const DashboardAnalytics = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {produtosProximosVencimento.length === 0 ? (
+          {vencimentoLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <p className="text-brand-brown-700">Carregando dados...</p>
+            </div>
+          ) : (produtosProximosVencimento || []).length === 0 ? (
             <div className="text-center py-8">
               <span className="text-6xl">✅</span>
               <p className="text-brand-brown-700 mt-4">Nenhum produto próximo ao vencimento!</p>
@@ -183,7 +171,7 @@ export const DashboardAnalytics = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {produtosProximosVencimento.map((produto) => (
+              {(produtosProximosVencimento || []).map((produto) => (
                 <div
                   key={produto.numeroLote}
                   className={`p-4 rounded-lg border-2 ${getValidityClass(produto.diasRestantes)}`}
