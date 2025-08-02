@@ -11,14 +11,12 @@ import { useProducts, useCreateProduct } from '@/hooks/useProducts';
 import { useLotesProducao, useCreateLoteProducao } from '@/hooks/useLotesProducao';
 import { useDistribuidores } from '@/hooks/useDistribuidores';
 
-const saboresDisponiveis = [
-  'Brigadeiro',
-  'Creme de Nozes',
-  'Doce de Leite',
-  'Leite Condensado',
-  'Chocolate',
-  'Tradicional'
-];
+const tiposDisponiveis = ['Pão de mel', 'Alfajor'];
+
+const saboresPorTipo = {
+  'Pão de mel': ['Doce de Leite', 'Brigadeiro', 'Creme de Nozes', 'Trufado'],
+  'Alfajor': ['Doce de Leite']
+};
 
 export const GerenciamentoProducao = () => {
   const { data: produtos = [] } = useProducts();
@@ -31,7 +29,7 @@ export const GerenciamentoProducao = () => {
 
   const [formData, setFormData] = useState({
     numeroLote: '',
-    produto: '',
+    tipoProduto: '',
     sabor: '',
     quantidadeProduzida: '',
     dataFabricacao: '',
@@ -43,7 +41,7 @@ export const GerenciamentoProducao = () => {
   const resetForm = () => {
     setFormData({
       numeroLote: '',
-      produto: '',
+      tipoProduto: '',
       sabor: '',
       quantidadeProduzida: '',
       dataFabricacao: '',
@@ -57,7 +55,7 @@ export const GerenciamentoProducao = () => {
   const validateForm = () => {
     const errors = [];
     if (!formData.numeroLote) errors.push('Número do Lote');
-    if (!formData.produto) errors.push('Produto');
+    if (!formData.tipoProduto) errors.push('Tipo de Produto');
     if (!formData.quantidadeProduzida) errors.push('Quantidade Produzida');
     if (!formData.dataFabricacao) errors.push('Data de Fabricação');
     if (!formData.dataValidade) errors.push('Data de Validade');
@@ -80,32 +78,25 @@ export const GerenciamentoProducao = () => {
     }
 
     try {
-      // Primeiro, criar ou verificar se o produto existe
-      let produtoSelecionado = produtos.find(p => p.id === formData.produto);
+      // Criar o produto baseado no tipo e sabor selecionados
+      const novoProduto = {
+        nome: `${formData.tipoProduto} ${formData.sabor}`,
+        tipo: formData.tipoProduto,
+        sabor: formData.sabor || null
+      };
       
-      if (!produtoSelecionado && formData.produto) {
-        // Se não encontrar o produto pelo ID, verificar se é um novo produto
-        const novoProduto = {
-          nome: formData.produto,
-          tipo: 'doce',
-          sabor: formData.sabor || null,
-          descricao: `Produto criado durante produção do lote ${formData.numeroLote}`,
-          preco_unitario: null
-        };
-        
-        produtoSelecionado = await createProductMutation.mutateAsync(novoProduto);
-      }
+      const produtoSelecionado = await createProductMutation.mutateAsync(novoProduto);
 
       // Criar o lote de produção
       const novoLote = {
-        produto_id: produtoSelecionado?.id || formData.produto,
+        produto_id: produtoSelecionado.id,
         codigo_lote: formData.numeroLote,
         quantidade_produzida: parseInt(formData.quantidadeProduzida),
         data_producao: formData.dataFabricacao,
         data_validade: formData.dataValidade,
         nota_fiscal: formData.notaFiscal || null,
         responsavel: formData.responsavel,
-        observacoes: formData.sabor ? `Sabor: ${formData.sabor}` : null,
+        observacoes: `Tipo: ${formData.tipoProduto}, Sabor: ${formData.sabor}`,
         status: 'ativo'
       };
 
@@ -128,10 +119,11 @@ export const GerenciamentoProducao = () => {
   };
 
   const handleEdit = (lote: any) => {
+    const produto = lote.produtos;
     setFormData({
       numeroLote: lote.codigo_lote,
-      produto: lote.produto_id,
-      sabor: lote.observacoes?.includes('Sabor:') ? lote.observacoes.split('Sabor: ')[1] : '',
+      tipoProduto: produto?.tipo || '',
+      sabor: produto?.sabor || '',
       quantidadeProduzida: lote.quantidade_produzida.toString(),
       dataFabricacao: lote.data_producao,
       dataValidade: lote.data_validade,
@@ -175,27 +167,31 @@ export const GerenciamentoProducao = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="produto" className="text-brand-brown-800">Nome do Produto *</Label>
-              <Select value={formData.produto} onValueChange={(value) => setFormData(prev => ({ ...prev, produto: value }))}>
+              <Label htmlFor="tipoProduto" className="text-brand-brown-800">Tipo de Produto *</Label>
+              <Select value={formData.tipoProduto} onValueChange={(value) => setFormData(prev => ({ ...prev, tipoProduto: value, sabor: '' }))}>
                 <SelectTrigger className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none">
-                  <SelectValue placeholder="Selecione o produto" />
+                  <SelectValue placeholder="Selecione o tipo" />
                 </SelectTrigger>
                 <SelectContent className="bg-brand-yellow-100">
-                  {produtos.map(produto => (
-                    <SelectItem className="bg-brand-yellow-50" key={produto.id} value={produto.id}>{produto.nome}</SelectItem>
+                  {tiposDisponiveis.map(tipo => (
+                    <SelectItem className="bg-brand-yellow-50" key={tipo} value={tipo}>{tipo}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="sabor" className="text-brand-brown-800">Sabor</Label>
-              <Select value={formData.sabor} onValueChange={(value) => setFormData(prev => ({ ...prev, sabor: value }))}>
+              <Label htmlFor="sabor" className="text-brand-brown-800">Sabor *</Label>
+              <Select 
+                value={formData.sabor} 
+                onValueChange={(value) => setFormData(prev => ({ ...prev, sabor: value }))}
+                disabled={!formData.tipoProduto}
+              >
                 <SelectTrigger className="bg-brand-yellow-100 text-brand-brown-800 !placeholder-[#8a7760] !ring-0 !ring-transparent !outline-none !border-none focus:!ring-0 focus:!outline-none focus:!border-none">
-                  <SelectValue placeholder="Selecione o sabor" />
+                  <SelectValue placeholder={formData.tipoProduto ? "Selecione o sabor" : "Primeiro selecione o tipo"} />
                 </SelectTrigger>
                 <SelectContent className="bg-brand-yellow-100">
-                  {saboresDisponiveis.map(sabor => (
+                  {formData.tipoProduto && saboresPorTipo[formData.tipoProduto as keyof typeof saboresPorTipo]?.map(sabor => (
                     <SelectItem className="bg-brand-yellow-50" key={sabor} value={sabor}>{sabor}</SelectItem>
                   ))}
                 </SelectContent>
