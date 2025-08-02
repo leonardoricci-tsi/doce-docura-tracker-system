@@ -1,15 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export const useAnalyticsStats = () => {
+export const useAnalyticsStats = (tipoFiltro?: string) => {
   return useQuery({
-    queryKey: ['analytics-stats'],
+    queryKey: ['analytics-stats', tipoFiltro],
     queryFn: async () => {
       // Buscar lotes ativos
-      const { data: lotes, error: lotesError } = await supabase
+      let query = supabase
         .from('lotes_producao')
-        .select('*')
+        .select(`
+          *,
+          produtos (
+            tipo
+          )
+        `)
         .eq('status', 'ativo');
+      
+      if (tipoFiltro && tipoFiltro !== 'geral') {
+        query = query.eq('produtos.tipo', tipoFiltro);
+      }
+      
+      const { data: lotes, error: lotesError } = await query;
       
       if (lotesError) throw lotesError;
 
@@ -41,18 +52,25 @@ export const useAnalyticsStats = () => {
   });
 };
 
-export const useProducaoPorSabor = () => {
+export const useProducaoPorSabor = (tipoFiltro?: string) => {
   return useQuery({
-    queryKey: ['producao-por-sabor'],
+    queryKey: ['producao-por-sabor', tipoFiltro],
     queryFn: async () => {
-      const { data: lotes, error } = await supabase
+      let query = supabase
         .from('lotes_producao')
         .select(`
           quantidade_produzida,
           produtos (
-            sabor
+            sabor,
+            tipo
           )
         `);
+      
+      if (tipoFiltro && tipoFiltro !== 'geral') {
+        query = query.eq('produtos.tipo', tipoFiltro);
+      }
+      
+      const { data: lotes, error } = await query;
       
       if (error) throw error;
 
@@ -72,19 +90,30 @@ export const useProducaoPorSabor = () => {
   });
 };
 
-export const useDistribuicaoPorRegiao = () => {
+export const useDistribuicaoPorRegiao = (tipoFiltro?: string) => {
   return useQuery({
-    queryKey: ['distribuicao-por-regiao'],
+    queryKey: ['distribuicao-por-regiao', tipoFiltro],
     queryFn: async () => {
-      const { data: distribuicoes, error } = await supabase
+      let query = supabase
         .from('distribuicoes')
         .select(`
           quantidade_distribuida,
           distribuidor_id,
           distribuidores (
             nome
+          ),
+          lotes_producao!inner (
+            produtos (
+              tipo
+            )
           )
         `);
+      
+      if (tipoFiltro && tipoFiltro !== 'geral') {
+        query = query.eq('lotes_producao.produtos.tipo', tipoFiltro);
+      }
+      
+      const { data: distribuicoes, error } = await query;
       
       if (error) throw error;
 
@@ -104,14 +133,14 @@ export const useDistribuicaoPorRegiao = () => {
   });
 };
 
-export const useProdutosProximosVencimento = () => {
+export const useProdutosProximosVencimento = (tipoFiltro?: string) => {
   return useQuery({
-    queryKey: ['produtos-proximos-vencimento'],
+    queryKey: ['produtos-proximos-vencimento', tipoFiltro],
     queryFn: async () => {
       const dataLimite = new Date();
       dataLimite.setDate(dataLimite.getDate() + 30);
       
-      const { data: lotes, error } = await supabase
+      let query = supabase
         .from('lotes_producao')
         .select(`
           *,
@@ -129,6 +158,12 @@ export const useProdutosProximosVencimento = () => {
         .lte('data_validade', dataLimite.toISOString().split('T')[0])
         .eq('status', 'ativo')
         .order('data_validade', { ascending: true });
+      
+      if (tipoFiltro && tipoFiltro !== 'geral') {
+        query = query.eq('produtos.tipo', tipoFiltro);
+      }
+      
+      const { data: lotes, error } = await query;
       
       if (error) throw error;
 

@@ -1,7 +1,9 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useAnalyticsStats, useProducaoPorSabor, useDistribuicaoPorRegiao, useProdutosProximosVencimento } from '@/hooks/useAnalyticsData';
+import { useState } from 'react';
 
 const COLORS = ['#ec4899', '#f59e0b', '#10b981', '#8b5cf6', '#f97316'];
 
@@ -12,12 +14,32 @@ const getValidityClass = (dias: number) => {
 };
 
 export const DashboardAnalytics = () => {
-  const { data: stats, isLoading: statsLoading } = useAnalyticsStats();
-  const { data: saboresData, isLoading: saboresLoading } = useProducaoPorSabor();
-  const { data: regioesData, isLoading: regioesLoading } = useDistribuicaoPorRegiao();
-  const { data: produtosProximosVencimento, isLoading: vencimentoLoading } = useProdutosProximosVencimento();
+  const [tipoFiltro, setTipoFiltro] = useState<string>('geral');
+  
+  const { data: stats, isLoading: statsLoading } = useAnalyticsStats(tipoFiltro);
+  const { data: saboresData, isLoading: saboresLoading } = useProducaoPorSabor(tipoFiltro);
+  const { data: regioesData, isLoading: regioesLoading } = useDistribuicaoPorRegiao(tipoFiltro);
+  const { data: produtosProximosVencimento, isLoading: vencimentoLoading } = useProdutosProximosVencimento(tipoFiltro);
   return (
     <div className="space-y-8">
+      {/* Filtro de Tipo de Produto */}
+      <Card className="bg-brand-brown-200 border-brand-brown-300">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-4">
+            <label className="text-brand-brown-800 font-medium">Filtrar por tipo:</label>
+            <Select value={tipoFiltro} onValueChange={setTipoFiltro}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Selecione o tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="geral">Geral</SelectItem>
+                <SelectItem value="Pão de mel">Pão de mel</SelectItem>
+                <SelectItem value="Alfajor">Alfajor</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="bg-brand-brown-200 border-brand-brown-300">
