@@ -52,6 +52,15 @@ export const useDeleteLoteProducao = () => {
   
   return useMutation({
     mutationFn: async (loteId: string) => {
+      // Primeiro, excluir todas as distribuições relacionadas
+      const { error: distError } = await supabase
+        .from('distribuicoes')
+        .delete()
+        .eq('lote_id', loteId);
+      
+      if (distError) throw distError;
+
+      // Depois, excluir o lote de produção
       const { error } = await supabase
         .from('lotes_producao')
         .delete()
