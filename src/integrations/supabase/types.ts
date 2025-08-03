@@ -130,6 +130,48 @@ export type Database = {
         }
         Relationships: []
       }
+      lote_itens: {
+        Row: {
+          created_at: string
+          id: string
+          lote_id: string
+          produto_id: string
+          quantidade_produzida: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lote_id: string
+          produto_id: string
+          quantidade_produzida: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lote_id?: string
+          produto_id?: string
+          quantidade_produzida?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_lote_itens_lote"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes_producao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_lote_itens_produto"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lotes_producao: {
         Row: {
           codigo_lote: string
