@@ -230,35 +230,26 @@ export type Database = {
       produtos: {
         Row: {
           created_at: string | null
-          descricao: string | null
           id: string
           nome: string
-          preco_unitario: number | null
           sabor: string | null
           tipo: string
-          unidade_medida: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
-          descricao?: string | null
           id?: string
           nome: string
-          preco_unitario?: number | null
           sabor?: string | null
           tipo: string
-          unidade_medida?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
-          descricao?: string | null
           id?: string
           nome?: string
-          preco_unitario?: number | null
           sabor?: string | null
           tipo?: string
-          unidade_medida?: string | null
           updated_at?: string | null
         }
         Relationships: []

@@ -46,3 +46,21 @@ export const useCreateLoteProducao = () => {
     },
   });
 };
+
+export const useDeleteLoteProducao = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (loteId: string) => {
+      const { error } = await supabase
+        .from('lotes_producao')
+        .delete()
+        .eq('id', loteId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['lotes-producao'] });
+    },
+  });
+};

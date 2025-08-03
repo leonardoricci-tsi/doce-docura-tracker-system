@@ -12,16 +12,16 @@ export const useFinancialAnalytics = () => {
           *,
           lotes_producao (
             produtos (
-              preco_unitario
+              tipo
             )
           )
         `);
 
       if (distribError) throw distribError;
 
-      // Calcular receita baseada nas distribuições
+      // Calcular receita baseada nas distribuições (preço fixo por enquanto)
       const receitaTotal = distribuicoes?.reduce((acc, dist) => {
-        const preco = dist.lotes_producao?.produtos?.preco_unitario || 10; // preço padrão
+        const preco = 10; // preço padrão de R$ 10,00 por unidade
         return acc + (dist.quantidade_distribuida * preco);
       }, 0) || 0;
 

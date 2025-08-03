@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { useProducts, useCreateProduct } from '@/hooks/useProducts';
-import { useLotesProducao, useCreateLoteProducao } from '@/hooks/useLotesProducao';
+import { useLotesProducao, useCreateLoteProducao, useDeleteLoteProducao } from '@/hooks/useLotesProducao';
 import { useDistribuidores } from '@/hooks/useDistribuidores';
 
 const tiposDisponiveis = ['Pão de mel', 'Alfajor'];
@@ -24,6 +24,7 @@ export const GerenciamentoProducao = () => {
   const { data: distribuidores = [] } = useDistribuidores();
   const createProductMutation = useCreateProduct();
   const createLoteMutation = useCreateLoteProducao();
+  const deleteLoteMutation = useDeleteLoteProducao();
   const [editingId, setEditingId] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -133,12 +134,22 @@ export const GerenciamentoProducao = () => {
     setEditingId(lote.id);
   };
 
-  const handleDelete = (id: string) => {
-    // Por enquanto apenas alerta, implementar delete mutation se necessário
-    toast({
-      title: "Ação não disponível",
-      description: "A exclusão de lotes será implementada posteriormente."
-    });
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Tem certeza que deseja excluir este lote de produção?')) {
+      try {
+        await deleteLoteMutation.mutateAsync(id);
+        toast({
+          title: "Lote excluído",
+          description: "Lote de produção excluído com sucesso."
+        });
+      } catch (error: any) {
+        toast({
+          title: "Erro",
+          description: error.message || "Erro ao excluir o lote. Tente novamente.",
+          variant: "destructive"
+        });
+      }
+    }
   };
 
   return (
@@ -331,8 +342,9 @@ export const GerenciamentoProducao = () => {
                           variant="outline"
                           onClick={() => handleDelete(lote.id)}
                           className="border-red-300 hover:bg-red-100 text-red-600"
+                          disabled={deleteLoteMutation.isPending}
                         >
-                          🗑️
+                          {deleteLoteMutation.isPending ? '⏳' : '🗑️'}
                         </Button>
                       </div>
                     </TableCell>
