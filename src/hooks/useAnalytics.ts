@@ -50,9 +50,12 @@ export const useOperationalAnalytics = () => {
         .from('lotes_producao')
         .select(`
           *,
-          produtos (
-            nome,
-            tipo
+          lote_itens (
+            quantidade_produzida,
+            produtos (
+              nome,
+              tipo
+            )
           )
         `)
         .order('data_producao', { ascending: false });
@@ -61,7 +64,9 @@ export const useOperationalAnalytics = () => {
 
       const totalLotes = lotes?.length || 0;
       const lotesAtivos = lotes?.filter(l => l.status === 'ativo').length || 0;
-      const producaoTotal = lotes?.reduce((acc, lote) => acc + lote.quantidade_produzida, 0) || 0;
+      const producaoTotal = lotes?.reduce((acc, lote) => {
+        return acc + (lote.lote_itens?.reduce((itemAcc: number, item: any) => itemAcc + item.quantidade_produzida, 0) || 0);
+      }, 0) || 0;
       
       // Calcular eficiência baseada nos últimos 30 dias
       const dataLimite = new Date();
@@ -91,8 +96,10 @@ export const useQualityAnalytics = () => {
         .from('lotes_producao')
         .select(`
           *,
-          produtos (
-            nome
+          lote_itens (
+            produtos (
+              nome
+            )
           )
         `)
         .order('data_producao', { ascending: false });
@@ -107,14 +114,17 @@ export const useQualityAnalytics = () => {
 
       // Agrupar por produto para análise detalhada
       const produtoStats = lotes?.reduce((acc: any, lote) => {
-        const produtoNome = lote.produtos?.nome || 'Desconhecido';
-        if (!acc[produtoNome]) {
-          acc[produtoNome] = { total: 0, aprovados: 0 };
-        }
-        acc[produtoNome].total += 1;
-        if (lote.status === 'ativo') {
-          acc[produtoNome].aprovados += 1;
-        }
+        // Para cada item do lote
+        lote.lote_itens?.forEach((item: any) => {
+          const produtoNome = item.produtos?.nome || 'Desconhecido';
+          if (!acc[produtoNome]) {
+            acc[produtoNome] = { total: 0, aprovados: 0 };
+          }
+          acc[produtoNome].total += 1;
+          if (lote.status === 'ativo') {
+            acc[produtoNome].aprovados += 1;
+          }
+        });
         return acc;
       }, {});
 

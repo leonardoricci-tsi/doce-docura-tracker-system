@@ -5,19 +5,22 @@ export const useAnalyticsStats = (tipoFiltro?: string) => {
   return useQuery({
     queryKey: ['analytics-stats', tipoFiltro],
     queryFn: async () => {
-      // Buscar lotes ativos
+      // Buscar lotes ativos com seus itens
       let query = supabase
         .from('lotes_producao')
         .select(`
           *,
-          produtos (
-            tipo
+          lote_itens (
+            quantidade_produzida,
+            produtos (
+              tipo
+            )
           )
         `)
         .eq('status', 'ativo');
       
       if (tipoFiltro && tipoFiltro !== 'geral') {
-        query = query.eq('produtos.tipo', tipoFiltro);
+        query = query.eq('lote_itens.produtos.tipo', tipoFiltro);
       }
       
       const { data: lotes, error: lotesError } = await query;
@@ -25,7 +28,9 @@ export const useAnalyticsStats = (tipoFiltro?: string) => {
       if (lotesError) throw lotesError;
 
       // Buscar total de produtos produzidos
-      const totalProduzidos = lotes?.reduce((acc, lote) => acc + lote.quantidade_produzida, 0) || 0;
+      const totalProduzidos = lotes?.reduce((acc, lote) => {
+        return acc + (lote.lote_itens?.reduce((itemAcc, item) => itemAcc + item.quantidade_produzida, 0) || 0);
+      }, 0) || 0;
 
       // Buscar distribuidores
       const { data: distribuidores, error: distError } = await supabase
@@ -57,7 +62,7 @@ export const useProducaoPorSabor = (tipoFiltro?: string) => {
     queryKey: ['producao-por-sabor', tipoFiltro],
     queryFn: async () => {
       let query = supabase
-        .from('lotes_producao')
+        .from('lote_itens')
         .select(`
           quantidade_produzida,
           produtos (
@@ -70,16 +75,16 @@ export const useProducaoPorSabor = (tipoFiltro?: string) => {
         query = query.eq('produtos.tipo', tipoFiltro);
       }
       
-      const { data: lotes, error } = await query;
+      const { data: itens, error } = await query;
       
       if (error) throw error;
 
       // Agrupar por sabor
       const saboresMap = new Map();
-      lotes?.forEach(lote => {
-        const sabor = lote.produtos?.sabor || 'Sem sabor';
+      itens?.forEach(item => {
+        const sabor = item.produtos?.sabor || 'Sem sabor';
         const quantidade = saboresMap.get(sabor) || 0;
-        saboresMap.set(sabor, quantidade + lote.quantidade_produzida);
+        saboresMap.set(sabor, quantidade + item.quantidade_produzida);
       });
 
       return Array.from(saboresMap.entries()).map(([sabor, quantidade]) => ({
@@ -144,10 +149,12 @@ export const useProdutosProximosVencimento = (tipoFiltro?: string) => {
         .from('lotes_producao')
         .select(`
           *,
-          produtos (
-            nome,
-            tipo,
-            sabor
+          lote_itens (
+            produtos (
+              nome,
+              tipo,
+              sabor
+            )
           ),
           distribuicoes (
             distribuidores (
@@ -160,10 +167,10 @@ export const useProdutosProximosVencimento = (tipoFiltro?: string) => {
         .order('data_validade', { ascending: true });
       
       if (tipoFiltro && tipoFiltro !== 'geral') {
-        query = query.eq('produtos.tipo', tipoFiltro);
+        query = query.eq('lote_itens.produtos.tipo', tipoFiltro);
       }
       
-      const { data: lotes, error } = await query;
+        const { data: lotes, error } = await query;
       
       if (error) throw error;
 
@@ -175,9 +182,14 @@ export const useProdutosProximosVencimento = (tipoFiltro?: string) => {
         // Pegar o primeiro distribuidor (pode haver vários)
         const distribuidor = lote.distribuicoes?.[0]?.distribuidores?.nome || 'Sem distribuidor';
         
+        // Montar nome do produto baseado nos itens do lote
+        const produtoNome = lote.lote_itens && lote.lote_itens.length > 0 
+          ? lote.lote_itens.map(item => `${item.produtos?.tipo || ''} ${item.produtos?.sabor || ''}`.trim()).join(', ')
+          : 'Produtos diversos';
+        
         return {
           numeroLote: lote.codigo_lote,
-          produto: `${lote.produtos?.tipo || ''} ${lote.produtos?.sabor || ''}`.trim() || lote.produtos?.nome || 'Produto desconhecido',
+          produto: produtoNome,
           dataValidade: lote.data_validade,
           distribuidor,
           diasRestantes

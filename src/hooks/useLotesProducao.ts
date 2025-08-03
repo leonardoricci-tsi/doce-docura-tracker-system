@@ -14,9 +14,13 @@ export const useLotesProducao = () => {
         .from('lotes_producao')
         .select(`
           *,
-          produtos (
-            nome,
-            tipo
+          lote_itens (
+            *,
+            produtos (
+              nome,
+              tipo,
+              sabor
+            )
           )
         `)
         .order('data_producao', { ascending: false });

@@ -181,8 +181,6 @@ export type Database = {
           id: string
           nota_fiscal: string | null
           observacoes: string | null
-          produto_id: string
-          quantidade_produzida: number
           responsavel: string
           status: string | null
           updated_at: string | null
@@ -195,8 +193,6 @@ export type Database = {
           id?: string
           nota_fiscal?: string | null
           observacoes?: string | null
-          produto_id: string
-          quantidade_produzida: number
           responsavel: string
           status?: string | null
           updated_at?: string | null
@@ -209,21 +205,11 @@ export type Database = {
           id?: string
           nota_fiscal?: string | null
           observacoes?: string | null
-          produto_id?: string
-          quantidade_produzida?: number
           responsavel?: string
           status?: string | null
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "lotes_producao_produto_id_fkey"
-            columns: ["produto_id"]
-            isOneToOne: false
-            referencedRelation: "produtos"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       pontos_venda: {
         Row: {
