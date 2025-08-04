@@ -144,7 +144,7 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
   };
 
   const lotesDosProdutos = lotes.filter(lote =>
-    !formData.produto || lote.produto_id === formData.produto
+    !formData.produto || lote.lote_itens?.some(item => item.produto_id === formData.produto)
   );
 
   return (
@@ -193,7 +193,7 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
                   <SelectContent className="bg-brand-brown-800 border-0 focus:ring-0 focus:outline-none">
                     {lotesDosProdutos.map(lote => (
                       <SelectItem key={lote.id} value={lote.id}>
-                        {lote.codigo_lote} - {lote.produtos?.nome}
+                        {lote.codigo_lote} - {lote.lote_itens?.map(item => item.produtos?.nome).join(', ') || 'N/A'}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -310,7 +310,7 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
                   {distribuicoes.map((distribuicao) => (
                     <TableRow key={distribuicao.id}>
                       <TableCell className="font-medium text-brand-begeSuave">
-                        {distribuicao.lotes_producao?.produtos?.nome}
+                        {distribuicao.lotes_producao?.lote_itens?.map(item => item.produtos?.nome).join(', ') || 'N/A'}
                       </TableCell>
                       <TableCell className="text-brand-begeSuave">{distribuicao.lotes_producao?.codigo_lote}</TableCell>
                       <TableCell className="text-brand-begeSuave">{distribuicao.quantidade_distribuida}</TableCell>

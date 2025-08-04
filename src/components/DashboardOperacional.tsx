@@ -163,7 +163,7 @@ export const DashboardOperacional = () => {
                 {lotes.slice(0, 5).map((lote) => (
                   <TableRow key={lote.id}>
                     <TableCell className="font-medium">{lote.codigo_lote}</TableCell>
-                    <TableCell>{lote.produtos?.nome || 'N/A'}</TableCell>
+                    <TableCell>{lote.lote_itens?.[0]?.produtos?.nome || 'N/A'}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div className="w-20 bg-gray-200 rounded-full h-2">

@@ -16,7 +16,7 @@ export const Rastreabilidade = () => {
   const { data: distribuicoes = [] } = useDistribuicoes();
 
   const lotesFiltrados = lotes.filter(lote => 
-    lote.produtos?.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
+    lote.lote_itens?.some(item => item.produtos?.nome.toLowerCase().includes(termoBusca.toLowerCase())) ||
     lote.codigo_lote.toLowerCase().includes(termoBusca.toLowerCase())
   );
 
@@ -120,7 +120,7 @@ export const Rastreabilidade = () => {
                   const status = getStatusLote(lote);
                   return (
                     <TableRow key={lote.id}>
-                      <TableCell className="font-medium text-brand-trufa">{lote.produtos?.nome}</TableCell>
+                      <TableCell className="font-medium text-brand-trufa">{lote.lote_itens?.map(item => item.produtos?.nome).join(', ') || 'N/A'}</TableCell>
                       <TableCell className="text-brand-trufa">{lote.codigo_lote}</TableCell>
                       <TableCell className="text-brand-trufa">{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
                       <TableCell className="text-brand-trufa">{new Date(lote.data_validade).toLocaleDateString('pt-BR')}</TableCell>
@@ -181,7 +181,7 @@ export const Rastreabilidade = () => {
                         <TableCell className="text-brand-trufa">{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
                         <TableCell className="font-medium text-brand-trufa">Produção Finalizada</TableCell>
                         <TableCell className="text-brand-trufa">{lote.responsavel}</TableCell>
-                        <TableCell className="text-brand-trufa">{lote.quantidade_produzida} unidades</TableCell>
+                        <TableCell className="text-brand-trufa">{lote.lote_itens?.reduce((acc, item) => acc + item.quantidade_produzida, 0) || 0} unidades</TableCell>
                         <TableCell className="text-brand-trufa">Fábrica</TableCell>
                       </TableRow>
                     );

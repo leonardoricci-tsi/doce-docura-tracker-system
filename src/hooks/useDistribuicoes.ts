@@ -16,8 +16,10 @@ export const useDistribuicoes = () => {
           *,
           lotes_producao (
             codigo_lote,
-            produtos (
-              nome
+            lote_itens (
+              produtos (
+                nome
+              )
             )
           ),
           distribuidores (

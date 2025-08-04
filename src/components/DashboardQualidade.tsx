@@ -289,7 +289,7 @@ export const DashboardQualidade = () => {
                   <TableRow key={lote.id}>
                     <TableCell className="font-medium">{lote.codigo_lote}</TableCell>
                     <TableCell>{lote.codigo_lote}</TableCell>
-                    <TableCell>{lote.produtos?.nome || 'N/A'}</TableCell>
+                    <TableCell>{lote.lote_itens?.[0]?.produtos?.nome || 'N/A'}</TableCell>
                     <TableCell>{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell>
                       <Badge className={getResultadoColor(lote.status === 'ativo' ? 'aprovado' : 'rejeitado')}>
