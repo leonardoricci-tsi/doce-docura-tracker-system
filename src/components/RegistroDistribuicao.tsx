@@ -14,16 +14,15 @@ import { useDistribuicoes, useCreateDistribuicao } from '@/hooks/useDistribuicoe
 import { useDistribuidores } from '@/hooks/useDistribuidores';
 
 const regioesDisponiveis = [
-  'Grande SP',
-  'Interior de SP',
-  'Sul de MG',
-  'Centro RJ',
-  'Zona Sul RJ',
-  'Norte RJ',
-  'BH',
-  'Interior MG',
-  'Sul do País',
-  'Centro-Oeste'
+  'Marilia',
+  'Tupã',
+  'Bauru',
+  'Campinas',
+  'São Paulo',
+  'Oriente',
+  'Pompeia',
+  'Assis',
+  'Outros'
 ];
 
 interface RegistroDistribuicaoProps {
