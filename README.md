@@ -73,7 +73,7 @@ GitHub: [@leonardoricci-tsi](https://github.com/leonardoricci-tsi)
 
 **José Gabriel**  
 Estudante de Big Data – FATEC  
-Colaborador no desenvolvimento do sistema e apoio na modelagem e validação do projeto.
+Colaborador no desenvolvimento do sistema e apoio na modelagem e validação do projeto.  
 GitHub: [@josegab1515](https://github.com/josegab1515)
 
 ---
