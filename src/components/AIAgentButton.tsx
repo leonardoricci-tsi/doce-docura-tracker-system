@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Bot, MessageCircle, X, Send } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Message {
   id: string;
@@ -45,22 +46,138 @@ export const AIAgentButton = () => {
     setIsLoading(true);
 
     try {
-      // Simular resposta da IA (substitua pela integração real com Coze API)
-      setTimeout(() => {
-        const aiResponse: Message = {
-          id: (Date.now() + 1).toString(),
-          content: `Recebi sua mensagem: "${userMessage.content}". Esta é uma resposta simulada. Em breve integraremos com a API do Coze para respostas reais.`,
-          isUser: false,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, aiResponse]);
-        setIsLoading(false);
-        setTimeout(scrollToBottom, 100);
-      }, 1000);
+      // Chamar edge function para buscar dados e gerar resposta
+      const { data, error } = await supabase.functions.invoke('chatbot-data', {
+        body: {
+          query: userMessage.content,
+          action: determineAction(userMessage.content)
+        }
+      });
+
+      if (error) throw error;
+
+      let responseContent = '';
+      
+      if (data.success) {
+        responseContent = generateResponse(userMessage.content, data.data);
+      } else {
+        responseContent = `Desculpe, ocorreu um erro ao buscar os dados: ${data.error}`;
+      }
+
+      const aiResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        content: responseContent,
+        isUser: false,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, aiResponse]);
+      setIsLoading(false);
+      setTimeout(scrollToBottom, 100);
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error);
+      const errorResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        content: 'Desculpe, ocorreu um erro ao processar sua solicitação. Tente novamente.',
+        isUser: false,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorResponse]);
       setIsLoading(false);
     }
+  };
+
+  const determineAction = (message: string): string => {
+    const lowerMessage = message.toLowerCase();
+    
+    if (lowerMessage.includes('todos') && (lowerMessage.includes('pedido') || lowerMessage.includes('lote'))) {
+      return 'get_all_data';
+    } else if (lowerMessage.includes('buscar') || lowerMessage.includes('procurar')) {
+      return 'search_orders';
+    } else if (lowerMessage.includes('detalhe') || lowerMessage.includes('detalhes')) {
+      return 'get_order_details';
+    } else {
+      return 'general_query';
+    }
+  };
+
+  const generateResponse = (query: string, data: any): string => {
+    const lowerQuery = query.toLowerCase();
+
+    if (data.summary) {
+      // Resposta para dados gerais
+      return `📊 **Resumo do Sistema MaplyRastro:**
+
+🏭 **Lotes de Produção:** ${data.summary.total_lotes}
+📦 **Distribuições:** ${data.summary.total_distribuicoes}
+💰 **Vendas:** ${data.summary.total_vendas}
+🍯 **Produtos:** ${data.summary.total_produtos}
+🚚 **Distribuidores:** ${data.summary.total_distribuidores}
+
+${data.lotes_producao.length > 0 ? `\n**Últimos Lotes:**\n${data.lotes_producao.slice(0, 3).map((lote: any) => 
+  `• ${lote.codigo_lote} - ${new Date(lote.data_producao).toLocaleDateString('pt-BR')} (${lote.lote_itens?.length || 0} itens)`
+).join('\n')}` : ''}
+
+Como posso ajudá-lo com mais informações específicas?`;
+    }
+
+    if (data.lotes_encontrados || data.produtos_encontrados) {
+      // Resposta para busca
+      let response = '🔍 **Resultados da busca:**\n\n';
+      
+      if (data.lotes_encontrados?.length > 0) {
+        response += `**Lotes encontrados:**\n${data.lotes_encontrados.map((lote: any) => 
+          `• ${lote.codigo_lote} - ${new Date(lote.data_producao).toLocaleDateString('pt-BR')}`
+        ).join('\n')}\n\n`;
+      }
+      
+      if (data.produtos_encontrados?.length > 0) {
+        response += `**Produtos encontrados:**\n${data.produtos_encontrados.map((produto: any) => 
+          `• ${produto.nome} (${produto.tipo}${produto.sabor ? ` - ${produto.sabor}` : ''})`
+        ).join('\n')}`;
+      }
+      
+      if (data.lotes_encontrados?.length === 0 && data.produtos_encontrados?.length === 0) {
+        response = 'Não encontrei resultados para sua busca. Tente usar outros termos.';
+      }
+      
+      return response;
+    }
+
+    if (data.lote) {
+      // Resposta para detalhes de lote
+      const lote = data.lote;
+      return `📋 **Detalhes do Lote ${lote.codigo_lote}:**
+
+📅 **Data de Produção:** ${new Date(lote.data_producao).toLocaleDateString('pt-BR')}
+⏰ **Data de Validade:** ${new Date(lote.data_validade).toLocaleDateString('pt-BR')}
+👤 **Responsável:** ${lote.responsavel}
+📊 **Status:** ${lote.status}
+
+**Produtos no Lote:**
+${lote.lote_itens?.map((item: any) => 
+  `• ${item.produtos.nome} - ${item.quantidade_produzida} unidades`
+).join('\n') || 'Nenhum item encontrado'}
+
+${data.distribuicoes?.length > 0 ? `\n**Distribuições:**\n${data.distribuicoes.map((dist: any) => 
+  `• ${dist.distribuidores.nome} - ${dist.quantidade_distribuida} unidades (${new Date(dist.data_distribuicao).toLocaleDateString('pt-BR')})`
+).join('\n')}` : ''}`;
+    }
+
+    if (Array.isArray(data)) {
+      // Resposta para listas
+      if (lowerQuery.includes('distribuição')) {
+        return `📦 **Distribuições Recentes:**\n\n${data.slice(0, 5).map((dist: any) => 
+          `• ${dist.distribuidores?.nome || 'N/A'} - ${dist.quantidade_distribuida} unidades\n  📅 ${new Date(dist.data_distribuicao).toLocaleDateString('pt-BR')}`
+        ).join('\n\n')}`;
+      } else if (lowerQuery.includes('venda')) {
+        return `💰 **Vendas Recentes:**\n\n${data.slice(0, 5).map((venda: any) => 
+          `• ${venda.pontos_venda?.nome || 'N/A'} - ${venda.quantidade_vendida} unidades\n  📅 ${new Date(venda.data_venda).toLocaleDateString('pt-BR')}${venda.preco_venda ? `\n  💵 R$ ${Number(venda.preco_venda).toFixed(2)}` : ''}`
+        ).join('\n\n')}`;
+      }
+    }
+
+    return 'Dados encontrados! Como posso ajudá-lo a interpretar essas informações?';
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
