@@ -286,7 +286,7 @@ export const GerenciamentoProducao = () => {
             </div>
 
             {/* Adicionar Produtos */}
-            <div className="border-t pt-6">
+            <div className="border-t border-brand-chocolate pt-6">
               <h3 className="text-lg font-semibold text-brand-brown-800 mb-4">Produtos do Lote</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
@@ -352,7 +352,7 @@ export const GerenciamentoProducao = () => {
                   <h4 className="font-medium text-brand-brown-800 mb-3">Produtos adicionados:</h4>
                   <div className="space-y-2">
                     {produtosDoLote.map((produto, index) => (
-                      <div key={index} className="flex items-center justify-between bg-white p-3 rounded border">
+                      <div key={index} className="flex items-center justify-between bg-white p-3 rounded border border-brand-chocolate">
                         <span className="text-brand-brown-800">
                           {produto.tipoProduto} {produto.sabor} - {produto.quantidade} unidades
                         </span>
@@ -409,7 +409,7 @@ export const GerenciamentoProducao = () => {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className="border-brand-chocolate">
                   <TableHead className="text-brand-brown-800">Lote</TableHead>
                   <TableHead className="text-brand-brown-800">Produtos</TableHead>
                   <TableHead className="text-brand-brown-800">Qtd Total</TableHead>

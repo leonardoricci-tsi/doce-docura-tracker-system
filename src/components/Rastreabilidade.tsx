@@ -105,7 +105,7 @@ export const Rastreabilidade = () => {
           <div className="rounded-md border border-brand-marrom bg-brand-mel">
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className="border-brand-chocolate">
                   <TableHead className="text-brand-trufa">Produto</TableHead>
                   <TableHead className="text-brand-trufa">Lote</TableHead>
                   <TableHead className="text-brand-trufa">Data Produção</TableHead>
@@ -119,7 +119,7 @@ export const Rastreabilidade = () => {
                 {lotesFiltrados.map((lote) => {
                   const status = getStatusLote(lote);
                   return (
-                    <TableRow key={lote.id}>
+                    <TableRow key={lote.id} className="border-brand-chocolate">
                       <TableCell className="font-medium text-brand-trufa">{lote.lote_itens?.map(item => item.produtos?.nome).join(', ') || 'N/A'}</TableCell>
                       <TableCell className="text-brand-trufa">{lote.codigo_lote}</TableCell>
                       <TableCell className="text-brand-trufa">{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
@@ -162,7 +162,7 @@ export const Rastreabilidade = () => {
             <div className="rounded-md border border-brand-marrom bg-brand-mel">
               <Table>
                 <TableHeader>
-                  <TableRow>
+                  <TableRow className="border-brand-chocolate">
                     <TableHead className="text-brand-trufa">Data</TableHead>
                     <TableHead className="text-brand-trufa">Evento</TableHead>
                     <TableHead className="text-brand-trufa">Responsável</TableHead>

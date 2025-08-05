@@ -47,7 +47,7 @@ export const DistribuidorDashboard = ({ currentUser, onLogout }: DistribuidorDas
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-brand-AmareloOuro min-h-screen">
           <Tabs defaultValue="distribuicao" className="w-full ">
             <TabsList className="grid w-full grid-cols-2 mb-8 bg-brand-yellow-300 border border-brand-neutral-300">
-              <TabsTrigger value="distribuicao" className="flex items-center text-brand-chocolate gap-2 data-[state=active]:bg-brand-amareloPastel data-[state=active]:text-brand-doceLeite  font-semibold">
+              <TabsTrigger value="distribuicao" className="flex items-center text-brand-chocolate gap-2 data-[state=active]:bg-brand-amareloPastel data-[state=active]:text-brand-doceLeite font-semibold">
                 🚛 Distribuição
               </TabsTrigger>
               <TabsTrigger value="rastreabilidade" className="flex items-center text-brand-chocolate gap-2 data-[state=active]:bg-brand-amareloPastel data-[state=active]:text-brand-doceLeite font-semibold">
