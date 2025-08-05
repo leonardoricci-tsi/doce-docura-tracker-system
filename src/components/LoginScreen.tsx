@@ -19,8 +19,8 @@ export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
     loginWithEmail(email, password, role, onLogin);
   };
 
-  const handleSignup = (email: string, password: string, invitationCode: string) => {
-    signUpWithInvitation(email, password, invitationCode, () => setIsSigningUp(false));
+  const handleSignup = (email: string, password: string, invitationCode: string, nome: string, telefone: string) => {
+    signUpWithInvitation(email, password, invitationCode, nome, telefone, () => setIsSigningUp(false));
   };
 
   return (

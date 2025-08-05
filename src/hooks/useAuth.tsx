@@ -95,12 +95,14 @@ export const useAuth = () => {
     email: string,
     password: string,
     invitationCode: string,
+    nome: string,
+    telefone: string,
     onSuccess: () => void
   ) => {
-    if (!email || !password || !invitationCode) {
+    if (!email || !password || !invitationCode || !nome) {
       toast({
         title: "Campos obrigatórios",
-        description: "Preencha todos os campos para continuar.",
+        description: "Preencha todos os campos obrigatórios para continuar.",
         variant: "destructive"
       });
       return;
@@ -144,7 +146,9 @@ export const useAuth = () => {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
             tipo_usuario: invitation.tipo_usuario,
-            email: email
+            email: email,
+            nome: nome,
+            telefone: telefone
           }
         }
       });
@@ -169,7 +173,9 @@ export const useAuth = () => {
           .insert({
             id: data.user.id,
             email: email,
-            tipo_usuario: invitation.tipo_usuario
+            tipo_usuario: invitation.tipo_usuario,
+            nome: nome,
+            telefone: telefone
           });
 
         if (profileError) {
