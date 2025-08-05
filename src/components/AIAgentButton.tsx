@@ -220,7 +220,7 @@ ${data.distribuicoes?.length > 0 ? `\n**Distribuições:**\n${data.distribuicoes
               onClick={handleClose}
               className="h-6 w-6 text-brand-brown-800 hover:bg-brand-brown-800/10"
             >
-              <X className="h-4 w-4" />
+
             </Button>
           </DialogHeader>
 
