@@ -298,11 +298,11 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-brand-begeSuave">Produto</TableHead>
-                    <TableHead className="text-brand-begeSuave">Lote</TableHead>
-                    <TableHead className="text-brand-begeSuave">Quantidade</TableHead>
-                    <TableHead className="text-brand-begeSuave">Data</TableHead>
-                    <TableHead className="text-brand-begeSuave">Distribuidor</TableHead>
+                    <TableHead className="text-brand-brown-800">Produto</TableHead>
+                    <TableHead className="text-brand-brown-800">Lote</TableHead>
+                    <TableHead className="text-brand-brown-800">Quantidade</TableHead>
+                    <TableHead className="text-brand-brown-800">Data</TableHead>
+                    <TableHead className="text-brand-brown-800">Distribuidor</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
