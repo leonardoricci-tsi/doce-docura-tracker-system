@@ -204,14 +204,16 @@ ${data.distribuicoes?.length > 0 ? `\n**Distribuições:**\n${data.distribuicoes
         </Button>
       </div>
 
-      {/* AI Agent Chat Modal */}
-      <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="max-w-md max-h-[600px] bg-white border-brand-brown-800 p-0 overflow-hidden">
-          <DialogHeader className="flex flex-row items-center justify-between p-4 border-b border-brand-brown-200 bg-brand-AmareloOuro">
-            <DialogTitle className="text-brand-brown-800 flex items-center gap-2">
-              <Bot className="h-5 w-5" />
-              Assistente IA MaplyRastro
-            </DialogTitle>
+{/* AI Agent Chat Modal */}
+<Dialog open={isOpen} onOpenChange={handleClose}>
+  <DialogContent
+    className="max-w-md max-h-[600px] bg-white border-brand-brown-800 p-0 overflow-hidden [&_button[data-radix-dialog-close]]:hidden"
+  >
+    <DialogHeader className="flex flex-row items-center justify-between p-4 border-b border-brand-brown-200 bg-brand-AmareloOuro">
+      <DialogTitle className="text-brand-brown-800 flex items-center gap-2">
+        <Bot className="h-5 w-5" />
+        Assistente IA MaplyRastro
+      </DialogTitle>
             <Button
               variant="ghost"
               size="icon"
