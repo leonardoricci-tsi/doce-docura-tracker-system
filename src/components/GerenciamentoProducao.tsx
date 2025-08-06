@@ -5,11 +5,13 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useProducts, useCreateProduct } from '@/hooks/useProducts';
 import { useLotesProducao, useCreateLoteProducao, useDeleteLoteProducao } from '@/hooks/useLotesProducao';
 import { useCreateLoteItens } from '@/hooks/useLoteItens';
 import { useDistribuidores } from '@/hooks/useDistribuidores';
+import { QRCodeGenerator } from '@/components/QRCodeGenerator';
 
 const tiposDisponiveis = ['Pão de mel', 'Alfajor'];
 
@@ -438,6 +440,23 @@ export const GerenciamentoProducao = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-brand-brown-400 text-brand-brown-700 hover:bg-brand-brown-100"
+                            >
+                              📱 QR Code
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-md">
+                            <DialogHeader>
+                              <DialogTitle>QR Code do Lote</DialogTitle>
+                            </DialogHeader>
+                            <QRCodeGenerator lote={lote} />
+                          </DialogContent>
+                        </Dialog>
                         <Button
                           size="sm"
                           variant="outline"
