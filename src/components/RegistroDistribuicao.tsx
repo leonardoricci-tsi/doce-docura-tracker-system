@@ -7,11 +7,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { QrCode } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useProducts } from '@/hooks/useProducts';
 import { useLotesProducao } from '@/hooks/useLotesProducao';
 import { useDistribuicoes, useCreateDistribuicao } from '@/hooks/useDistribuicoes';
 import { useDistribuidores } from '@/hooks/useDistribuidores';
+import { QRCodeScanner } from '@/components/QRCodeScanner';
 
 const regioesDisponiveis = [
   'Marilia',
@@ -37,6 +39,7 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
   const createDistribuicaoMutation = useCreateDistribuicao();
 
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [showScanner, setShowScanner] = useState(false);
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -142,6 +145,57 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
     }
   };
 
+  const handleQRScanSuccess = (qrData: any) => {
+    try {
+      // Encontrar o produto baseado no nome do primeiro produto do QR code
+      const primeiroProdutoQR = qrData.produtos?.[0];
+      if (primeiroProdutoQR) {
+        const produtoEncontrado = produtos.find(p => 
+          p.nome.toLowerCase().includes(primeiroProdutoQR.nome.toLowerCase()) ||
+          primeiroProdutoQR.nome.toLowerCase().includes(p.nome.toLowerCase())
+        );
+
+        if (produtoEncontrado) {
+          // Encontrar o lote baseado no código do lote
+          const loteEncontrado = lotes.find(l => l.codigo_lote === qrData.codigoLote);
+
+          if (loteEncontrado) {
+            setFormData(prev => ({
+              ...prev,
+              produto: produtoEncontrado.id,
+              numeroLote: loteEncontrado.id,
+              quantidade: primeiroProdutoQR.quantidade?.toString() || prev.quantidade
+            }));
+
+            toast({
+              title: "Dados carregados do QR Code",
+              description: `Produto: ${produtoEncontrado.nome}, Lote: ${qrData.codigoLote}`
+            });
+          } else {
+            toast({
+              title: "Lote não encontrado",
+              description: `O lote ${qrData.codigoLote} não foi encontrado no sistema.`,
+              variant: "destructive"
+            });
+          }
+        } else {
+          toast({
+            title: "Produto não encontrado",
+            description: `O produto ${primeiroProdutoQR.nome} não foi encontrado no sistema.`,
+            variant: "destructive"
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao processar dados do QR:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao processar os dados do QR Code.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const lotesDosProdutos = lotes.filter(lote =>
     !formData.produto || lote.lote_itens?.some(item => item.produto_id === formData.produto)
   );
@@ -150,11 +204,22 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
     <div className="space-y-8">
       <Card className="bg-brand-brown-100 border-brand-marrom">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-brand-brown-800 font-bold">
-            🚛 {editingId ? 'Editar Distribuição' : 'Nova Distribuição'}
+          <CardTitle className="flex items-center justify-between text-brand-brown-800 font-bold">
+            <div className="flex items-center gap-2">
+              🚛 {editingId ? 'Editar Distribuição' : 'Nova Distribuição'}
+            </div>
+            <Button
+              type="button"
+              onClick={() => setShowScanner(true)}
+              className="bg-brand-marrom hover:bg-brand-marromEscuro text-white"
+              size="sm"
+            >
+              <QrCode className="h-4 w-4 mr-2" />
+              Escanear QR
+            </Button>
           </CardTitle>
           <CardDescription className = 'text-brand-brown-800'>
-            {editingId ? 'Atualize os dados da distribuição' : 'Registre uma nova distribuição de produtos'}
+            {editingId ? 'Atualize os dados da distribuição' : 'Registre uma nova distribuição de produtos ou escaneie um QR Code'}
           </CardDescription>
         </CardHeader>
         <CardContent className='text-brand-brown-800'>
@@ -323,6 +388,12 @@ export const RegistroDistribuicao = ({ distribuidorName }: RegistroDistribuicaoP
           )}
         </CardContent>
       </Card>
+
+      <QRCodeScanner 
+        isOpen={showScanner}
+        onClose={() => setShowScanner(false)}
+        onScanSuccess={handleQRScanSuccess}
+      />
     </div>
   );
 };
