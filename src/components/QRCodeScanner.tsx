@@ -46,11 +46,20 @@ export const QRCodeScanner = ({ isOpen, onClose, onScanSuccess }: QRCodeScannerP
   }, [isOpen]);
 
   const startScanner = async () => {
-    if (!videoRef.current) return;
+    if (!videoRef.current) {
+      console.log('QRCodeScanner: videoRef.current is null');
+      return;
+    }
 
     try {
+      console.log('QRCodeScanner: Iniciando scanner...');
       setError(null);
       setIsScanning(true);
+
+      // Verificar se QrScanner está disponível
+      if (!QrScanner.hasCamera()) {
+        throw new Error('Nenhuma câmera disponível');
+      }
 
       const scanner = new QrScanner(
         videoRef.current,
@@ -86,12 +95,29 @@ export const QRCodeScanner = ({ isOpen, onClose, onScanSuccess }: QRCodeScannerP
         }
       );
 
+      console.log('QRCodeScanner: Iniciando câmera...');
       await scanner.start();
+      console.log('QRCodeScanner: Câmera iniciada com sucesso');
       setQrScanner(scanner);
       setIsScanning(true);
     } catch (error) {
-      console.error('Erro ao iniciar scanner:', error);
-      setError('Erro ao acessar a câmera. Verifique as permissões.');
+      console.error('QRCodeScanner: Erro ao iniciar scanner:', error);
+      
+      let errorMessage = 'Erro ao acessar a câmera. Verifique as permissões.';
+      
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          errorMessage = 'Permissão de câmera negada. Por favor, permita o acesso à câmera.';
+        } else if (error.name === 'NotFoundError') {
+          errorMessage = 'Nenhuma câmera encontrada no dispositivo.';
+        } else if (error.name === 'NotSupportedError') {
+          errorMessage = 'Câmera não suportada pelo navegador.';
+        } else if (error.name === 'OverconstrainedError') {
+          errorMessage = 'Configuração de câmera não suportada.';
+        }
+      }
+      
+      setError(errorMessage);
       setIsScanning(false);
       toast({
         title: "Erro de câmera",
