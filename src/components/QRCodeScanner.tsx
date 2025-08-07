@@ -45,6 +45,41 @@ export const QRCodeScanner = ({ isOpen, onClose, onScanSuccess }: QRCodeScannerP
     };
   }, [isOpen]);
 
+  const requestCameraPermission = async () => {
+    try {
+      console.log('QRCodeScanner: Solicitando permissão de câmera...');
+      
+      // Solicitar permissão explícita de câmera
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: 'environment' // Câmera traseira em mobile
+        } 
+      });
+      
+      // Parar o stream imediatamente, só precisamos da permissão
+      stream.getTracks().forEach(track => track.stop());
+      console.log('QRCodeScanner: Permissão de câmera concedida');
+      
+      return true;
+    } catch (error) {
+      console.error('QRCodeScanner: Erro ao solicitar permissão:', error);
+      
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          setError('Permissão de câmera negada. Clique em "Permitir" quando o navegador solicitar.');
+        } else if (error.name === 'NotFoundError') {
+          setError('Nenhuma câmera encontrada no dispositivo.');
+        } else if (error.name === 'NotSupportedError') {
+          setError('Câmera não suportada pelo navegador.');
+        } else {
+          setError('Erro ao acessar a câmera. Verifique as permissões.');
+        }
+      }
+      
+      return false;
+    }
+  };
+
   const startScanner = async () => {
     if (!videoRef.current) {
       console.log('QRCodeScanner: videoRef.current is null');
@@ -54,7 +89,13 @@ export const QRCodeScanner = ({ isOpen, onClose, onScanSuccess }: QRCodeScannerP
     try {
       console.log('QRCodeScanner: Iniciando scanner...');
       setError(null);
-      setIsScanning(true);
+      setIsScanning(false);
+
+      // Primeiro solicitar permissão de câmera
+      const hasPermission = await requestCameraPermission();
+      if (!hasPermission) {
+        return;
+      }
 
       // Verificar se QrScanner está disponível
       if (!QrScanner.hasCamera()) {
@@ -92,6 +133,7 @@ export const QRCodeScanner = ({ isOpen, onClose, onScanSuccess }: QRCodeScannerP
           highlightScanRegion: true,
           highlightCodeOutline: true,
           preferredCamera: 'environment', // Câmera traseira em dispositivos móveis
+          maxScansPerSecond: 5, // Reduzir para melhor performance
         }
       );
 
