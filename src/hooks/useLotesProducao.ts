@@ -21,6 +21,9 @@ export const useLotesProducao = () => {
               tipo,
               sabor
             )
+          ),
+          distribuidores:distribuidor_destinatario_id (
+            nome
           )
         `)
         .order('data_producao', { ascending: false });

@@ -110,6 +110,7 @@ export const Rastreabilidade = () => {
                   <TableHead className="text-brand-trufa">Lote</TableHead>
                   <TableHead className="text-brand-trufa">Data Produção</TableHead>
                   <TableHead className="text-brand-trufa">Data Validade</TableHead>
+                  <TableHead className="text-brand-trufa">Distribuidor Destinatário</TableHead>
                   <TableHead className="text-brand-trufa">Status</TableHead>
                   <TableHead className="text-brand-trufa">Localização Atual</TableHead>
                   <TableHead className="text-brand-trufa">Ações</TableHead>
@@ -124,6 +125,7 @@ export const Rastreabilidade = () => {
                       <TableCell className="text-brand-trufa">{lote.codigo_lote}</TableCell>
                       <TableCell className="text-brand-trufa">{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
                       <TableCell className="text-brand-trufa">{new Date(lote.data_validade).toLocaleDateString('pt-BR')}</TableCell>
+                      <TableCell className="text-brand-trufa">{lote.distribuidores?.nome || 'Não definido'}</TableCell>
                       <TableCell>
                         <Badge variant={getStatusColor(status)}>
                           {status}

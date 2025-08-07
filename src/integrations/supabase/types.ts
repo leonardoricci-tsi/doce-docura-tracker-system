@@ -178,6 +178,7 @@ export type Database = {
           created_at: string | null
           data_producao: string
           data_validade: string
+          distribuidor_destinatario_id: string | null
           id: string
           nota_fiscal: string | null
           observacoes: string | null
@@ -190,6 +191,7 @@ export type Database = {
           created_at?: string | null
           data_producao: string
           data_validade: string
+          distribuidor_destinatario_id?: string | null
           id?: string
           nota_fiscal?: string | null
           observacoes?: string | null
@@ -202,6 +204,7 @@ export type Database = {
           created_at?: string | null
           data_producao?: string
           data_validade?: string
+          distribuidor_destinatario_id?: string | null
           id?: string
           nota_fiscal?: string | null
           observacoes?: string | null
@@ -209,7 +212,15 @@ export type Database = {
           status?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "lotes_producao_distribuidor_destinatario_id_fkey"
+            columns: ["distribuidor_destinatario_id"]
+            isOneToOne: false
+            referencedRelation: "distribuidores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pontos_venda: {
         Row: {

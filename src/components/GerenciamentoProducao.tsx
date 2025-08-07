@@ -43,7 +43,8 @@ export const GerenciamentoProducao = () => {
     dataFabricacao: '',
     dataValidade: '',
     notaFiscal: '',
-    responsavel: ''
+    responsavel: '',
+    distribuidorDestinatario: ''
   });
 
   const [produtoAtual, setProdutoAtual] = useState({
@@ -60,7 +61,8 @@ export const GerenciamentoProducao = () => {
       dataFabricacao: '',
       dataValidade: '',
       notaFiscal: '',
-      responsavel: ''
+      responsavel: '',
+      distribuidorDestinatario: ''
     });
     setProdutoAtual({
       tipoProduto: '',
@@ -129,6 +131,7 @@ export const GerenciamentoProducao = () => {
     if (!formData.dataFabricacao) errors.push('Data de Fabricação');
     if (!formData.dataValidade) errors.push('Data de Validade');
     if (!formData.responsavel) errors.push('Responsável');
+    if (!formData.distribuidorDestinatario) errors.push('Distribuidor Destinatário');
     if (produtosDoLote.length === 0) errors.push('Pelo menos um produto');
     
     return errors;
@@ -155,6 +158,7 @@ export const GerenciamentoProducao = () => {
         data_validade: formData.dataValidade,
         nota_fiscal: formData.notaFiscal || null,
         responsavel: formData.responsavel,
+        distribuidor_destinatario_id: formData.distribuidorDestinatario || null,
         observacoes: `Produtos: ${produtosDoLote.map(p => `${p.tipoProduto} ${p.sabor} (${p.quantidade})`).join(', ')}`,
         status: 'ativo'
       };
@@ -284,6 +288,22 @@ export const GerenciamentoProducao = () => {
                   placeholder="Ex: NF-001"
                   className="bg-brand-yellow-100 text-brand-brown-800"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="distribuidorDestinatario" className="text-brand-brown-800">Distribuidor Destinatário *</Label>
+                <Select value={formData.distribuidorDestinatario} onValueChange={(value) => setFormData(prev => ({ ...prev, distribuidorDestinatario: value }))}>
+                  <SelectTrigger className="bg-brand-yellow-100 text-brand-brown-800">
+                    <SelectValue placeholder="Selecione o distribuidor" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-brand-yellow-100">
+                    {distribuidores.map(distribuidor => (
+                      <SelectItem className="bg-brand-yellow-50" key={distribuidor.id} value={distribuidor.id}>
+                        {distribuidor.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -418,6 +438,7 @@ export const GerenciamentoProducao = () => {
                   <TableHead className="text-brand-brown-800">Data Fab.</TableHead>
                   <TableHead className="text-brand-brown-800">Data Val.</TableHead>
                   <TableHead className="text-brand-brown-800">Responsável</TableHead>
+                  <TableHead className="text-brand-brown-800">Distribuidor</TableHead>
                   <TableHead className="text-brand-brown-800">Status</TableHead>
                   <TableHead className="text-brand-brown-800">Ações</TableHead>
                 </TableRow>
@@ -433,6 +454,7 @@ export const GerenciamentoProducao = () => {
                     <TableCell className="text-brand-brown-800">{new Date(lote.data_producao).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell className="text-brand-brown-800">{new Date(lote.data_validade).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell className="text-brand-brown-800">{lote.responsavel}</TableCell>
+                    <TableCell className="text-brand-brown-800">{lote.distribuidores?.nome || 'Não definido'}</TableCell>
                     <TableCell className="text-brand-brown-800">
                       <span className={`px-2 py-1 rounded-full text-xs ${lote.status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
                         {lote.status}
