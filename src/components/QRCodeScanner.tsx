@@ -34,81 +34,68 @@ export const QRCodeScanner = ({ isOpen, onClose, onScanSuccess }: QRCodeScannerP
   const { toast } = useToast();
 
   useEffect(() => {
-    if (isOpen && videoRef.current) {
-      startScanner();
+    if (isOpen) {
+      // Espera o vídeo montar antes de iniciar
+      const timer = setTimeout(() => {
+        if (videoRef.current) startScanner();
+      }, 200);
+      return () => clearTimeout(timer);
+    } else {
+      stopScanner();
     }
-
-    return () => {
-      if (qrScanner) {
-        qrScanner.destroy();
-      }
-    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const requestCameraPermission = async () => {
     try {
       console.log('QRCodeScanner: Solicitando permissão de câmera...');
-      
-      // Solicitar permissão explícita de câmera
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
-          facingMode: 'environment' // Câmera traseira em mobile
-        } 
+        video: { facingMode: { ideal: "environment" } } 
       });
-      
-      // Parar o stream imediatamente, só precisamos da permissão
       stream.getTracks().forEach(track => track.stop());
-      console.log('QRCodeScanner: Permissão de câmera concedida');
-      
+      console.log('QRCodeScanner: Permissão concedida');
       return true;
-    } catch (error) {
-      console.error('QRCodeScanner: Erro ao solicitar permissão:', error);
-      
-      if (error instanceof Error) {
-        if (error.name === 'NotAllowedError') {
-          setError('Permissão de câmera negada. Clique em "Permitir" quando o navegador solicitar.');
-        } else if (error.name === 'NotFoundError') {
-          setError('Nenhuma câmera encontrada no dispositivo.');
-        } else if (error.name === 'NotSupportedError') {
-          setError('Câmera não suportada pelo navegador.');
-        } else {
-          setError('Erro ao acessar a câmera. Verifique as permissões.');
-        }
+    } catch (err) {
+      console.error('QRCodeScanner: Erro ao solicitar permissão:', err);
+      let msg = 'Erro ao acessar a câmera.';
+      if (err instanceof Error) {
+        if (err.name === 'NotAllowedError') msg = 'Permissão de câmera negada.';
+        else if (err.name === 'NotFoundError') msg = 'Nenhuma câmera encontrada.';
+        else if (err.name === 'NotSupportedError') msg = 'Câmera não suportada pelo navegador.';
       }
-      
+      setError(msg);
       return false;
     }
   };
 
   const startScanner = async () => {
     if (!videoRef.current) {
-      console.log('QRCodeScanner: videoRef.current is null');
+      console.log('QRCodeScanner: videoRef ainda não está pronto.');
       return;
     }
 
     try {
-      console.log('QRCodeScanner: Iniciando scanner...');
       setError(null);
       setIsScanning(false);
 
-      // Primeiro solicitar permissão de câmera
       const hasPermission = await requestCameraPermission();
-      if (!hasPermission) {
-        return;
-      }
+      if (!hasPermission) return;
 
-      // Verificar se QrScanner está disponível
-      if (!QrScanner.hasCamera()) {
+      if (!(await QrScanner.hasCamera())) {
         throw new Error('Nenhuma câmera disponível');
       }
 
+      let cameraType: string = 'environment';
+      const cameras = await QrScanner.listCameras(true);
+      if (!cameras.some(c => c.id && c.label.toLowerCase().includes('back'))) {
+        cameraType = 'user'; // fallback para frontal
+      }
+
       const scanner = new QrScanner(
-        videoRef.current,
-        (result) => {
+        videoRef.current!,
+        (result: string) => {
           try {
-            const parsedData = JSON.parse(result.data) as QRData;
-            
-            // Validar se o QR code tem a estrutura esperada
+            const parsedData = JSON.parse(result) as QRData;
             if (parsedData.codigoLote && parsedData.produtos) {
               onScanSuccess(parsedData);
               scanner.stop();
@@ -118,52 +105,41 @@ export const QRCodeScanner = ({ isOpen, onClose, onScanSuccess }: QRCodeScannerP
                 description: `Dados do lote ${parsedData.codigoLote} carregados.`
               });
             } else {
-              throw new Error('QR Code não contém dados válidos de lote');
+              throw new Error('QR Code inválido');
             }
-          } catch (error) {
-            console.error('Erro ao processar QR Code:', error);
+          } catch {
             toast({
               title: "QR Code inválido",
-              description: "Este QR Code não contém dados válidos de lote de produção.",
+              description: "Este QR Code não contém dados válidos.",
               variant: "destructive"
             });
           }
-        },
-        {
-          highlightScanRegion: true,
-          highlightCodeOutline: true,
-          preferredCamera: 'environment', // Câmera traseira em dispositivos móveis
-          maxScansPerSecond: 5, // Reduzir para melhor performance
         }
       );
-
-      console.log('QRCodeScanner: Iniciando câmera...');
-      await scanner.start();
-      console.log('QRCodeScanner: Câmera iniciada com sucesso');
-      setQrScanner(scanner);
-      setIsScanning(true);
-    } catch (error) {
-      console.error('QRCodeScanner: Erro ao iniciar scanner:', error);
       
-      let errorMessage = 'Erro ao acessar a câmera. Verifique as permissões.';
-      
-      if (error instanceof Error) {
-        if (error.name === 'NotAllowedError') {
-          errorMessage = 'Permissão de câmera negada. Por favor, permita o acesso à câmera.';
-        } else if (error.name === 'NotFoundError') {
-          errorMessage = 'Nenhuma câmera encontrada no dispositivo.';
-        } else if (error.name === 'NotSupportedError') {
-          errorMessage = 'Câmera não suportada pelo navegador.';
-        } else if (error.name === 'OverconstrainedError') {
-          errorMessage = 'Configuração de câmera não suportada.';
-        }
+      // Se quiser tentar setar a câmera (se suportar)
+      if (typeof scanner.setCamera === 'function') {
+        scanner.setCamera(cameraType);
       }
       
-      setError(errorMessage);
+      await scanner.start();
+      setQrScanner(scanner);
+      setIsScanning(true);
+      
+    } catch (err) {
+      console.error('QRCodeScanner: Erro ao iniciar scanner:', err);
+      let msg = 'Erro ao acessar a câmera.';
+      if (err instanceof Error) {
+        if (err.name === 'NotAllowedError') msg = 'Permissão de câmera negada.';
+        else if (err.name === 'NotFoundError') msg = 'Nenhuma câmera encontrada.';
+        else if (err.name === 'NotSupportedError') msg = 'Câmera não suportada pelo navegador.';
+        else if (err.name === 'OverconstrainedError') msg = 'Configuração de câmera não suportada.';
+      }
+      setError(msg);
       setIsScanning(false);
       toast({
         title: "Erro de câmera",
-        description: "Não foi possível acessar a câmera. Verifique as permissões.",
+        description: msg,
         variant: "destructive"
       });
     }
@@ -176,7 +152,7 @@ export const QRCodeScanner = ({ isOpen, onClose, onScanSuccess }: QRCodeScannerP
       setQrScanner(null);
     }
     setIsScanning(false);
-    onClose();
+    setError(null);
   };
 
   return (
