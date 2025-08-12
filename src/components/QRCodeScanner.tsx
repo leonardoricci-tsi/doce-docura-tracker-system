@@ -156,7 +156,14 @@ export const QRCodeScanner = ({ isOpen, onClose, onScanSuccess }: QRCodeScannerP
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={stopScanner}>
+    <Dialog open={isOpen} onOpenChange={(open) =>
+      {
+        if (!open){
+          stopScanner();
+
+        }
+      }
+    }>
       <DialogContent className="max-w-md w-full bg-brand-brown-100 border-brand-marrom">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between text-brand-brown-800">
@@ -167,7 +174,7 @@ export const QRCodeScanner = ({ isOpen, onClose, onScanSuccess }: QRCodeScannerP
             <Button
               variant="ghost"
               size="sm"
-              onClick={stopScanner}
+              onClick={onClose}
               className="text-brand-brown-800 hover:bg-brand-chocolate"
             >
               <X className="h-4 w-4" />
@@ -224,7 +231,7 @@ export const QRCodeScanner = ({ isOpen, onClose, onScanSuccess }: QRCodeScannerP
 
           <div className="flex gap-2">
             <Button
-              onClick={stopScanner}
+              onClick={onClose}
               variant="outline"
               className="flex-1 border-brand-marrom text-brand-brown-800"
             >
